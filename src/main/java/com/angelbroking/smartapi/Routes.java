@@ -18,7 +18,7 @@ public class Routes {
 	//private static String _loginUrl = "https://openapisuat.angelbroking.com/rest/auth/angelbroking/user/v1/loginByPassword";
 	private static String _loginUrl = "https://apiconnect.angelbroking.com/rest/auth/angelbroking/user/v1/loginByPassword";	
 	private static String _wsuri = "wss://omnefeeds.angelbroking.com/NestHtml5Mobile/socket/stream";
-
+	private static String _swsuri = "wss://smartapisocket.angelbroking.com/websocket";
 	// Initialize all routes,
 	@SuppressWarnings("serial")
 	public Routes() {
@@ -57,5 +57,8 @@ public class Routes {
 
 	public String getWsuri() {
 		return _wsuri;
+	}
+	public String getSWsuri() {
+		return _swsuri;
 	}
 }
