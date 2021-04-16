@@ -10,10 +10,10 @@ public class Test {
 	public static void main(String[] args) throws SmartAPIException {
 		try {
 
-			SmartConnect smartConnect = new SmartConnect();
-
-			// PROVIDE YOUR API KEY HERE
-			smartConnect.setApiKey("smartapi_key");
+			SmartConnect smartConnect = new SmartConnect("<smartapi_key>"); // PROVIDE YOUR API KEY HERE
+			
+			// OPTIONAL - ACCESS_TOKEN AND REFRESH TOKEN
+			// SmartConnect smartConnect = new SmartConnect("<smartapi_key>", "<YOUR_ACCESS_TOKEN>", "<YOUR_REFRESH_TOKEN>");
 
 			// Set session expiry callback.
 			smartConnect.setSessionExpiryHook(new SessionExpiryHook() {
@@ -23,7 +23,7 @@ public class Test {
 				}
 			});
 
-			User user = smartConnect.generateSession("S212741","abc222");
+			User user = smartConnect.generateSession("S212741", "abc222");
 			System.out.println(user.getAccessToken());
 			smartConnect.setAccessToken(user.getAccessToken());
 			smartConnect.setUserId(user.getUserId());
@@ -69,25 +69,25 @@ public class Test {
 //
 			System.out.println("convertPosition");
 			examples.convertPosition(smartConnect);
-		
+
 			System.out.println("createRule");
 			examples.createRule(smartConnect);
-			
+
 			System.out.println("ModifyRule");
 			examples.modifyRule(smartConnect);
-			
+
 			System.out.println("cancelRule");
 			examples.cancelRule(smartConnect);
-			
+
 			System.out.println("Rule Details");
 			examples.ruleDetails(smartConnect);
 //			
 			System.out.println("Rule List");
 			examples.ruleList(smartConnect);
-		
+
 			System.out.println("Historic candle Data");
 			examples.getCandleData(smartConnect);
-			
+
 			System.out.println("logout");
 			examples.logout(smartConnect);
 
@@ -99,7 +99,7 @@ public class Test {
 			String feedToken = user.getFeedToken();
 			String strWatchListScript = "nse_cm|2885&nse_cm|1594&nse_cm|11536&mcx_fo|221658";
 			String task = "mw";
-			//examples.tickerUsage(clientId, feedToken, strWatchListScript, task);
+			// examples.tickerUsage(clientId, feedToken, strWatchListScript, task);
 
 		} catch (Exception e) {
 			System.out.println("Exception: " + e.getMessage());

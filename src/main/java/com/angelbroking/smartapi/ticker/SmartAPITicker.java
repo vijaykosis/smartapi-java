@@ -248,6 +248,41 @@ public class SmartAPITicker {
 		}
 	}
 
+	/**
+	 * runSript script.
+	 */
+	public void runScript(String script, String task) {
+
+		if (ws != null) {
+			if (ws.isOpen()) {
+				if (task != null) {
+					if (task == "mw" || task == "sfi" || task == "dp") {
+						JSONObject wsMWJSONRequest = new JSONObject();
+						wsMWJSONRequest.put("task", task);
+						wsMWJSONRequest.put("channel", script);
+						wsMWJSONRequest.put("token", this.feedToken);
+						wsMWJSONRequest.put("user", this.clientId);
+						wsMWJSONRequest.put("acctid", this.clientId);
+
+						ws.sendText(wsMWJSONRequest.toString());
+					} else {
+						onErrorListener.onError(new SmartAPIException("task is unknown", "400"));
+					}
+				} else {
+					onErrorListener.onError(new SmartAPIException("task is null", "400"));
+				}
+			} else {
+				if (onErrorListener != null) {
+					onErrorListener.onError(new SmartAPIException("ticker is not connected", "504"));
+				}
+			}
+		} else {
+			if (onErrorListener != null) {
+				onErrorListener.onError(new SmartAPIException("ticker is null not connected", "504"));
+			}
+		}
+	}
+
 	public static byte[] decompress(byte[] compressedTxt) throws IOException {
 		ByteArrayOutputStream os = new ByteArrayOutputStream();
 		try (OutputStream ios = new InflaterOutputStream(os)) {
