@@ -2,8 +2,6 @@ package com.angelbroking.smartapi;
 
 import java.io.IOException;
 import java.net.Proxy;
-import java.util.Arrays;
-import java.util.Iterator;
 import java.util.List;
 
 import org.apache.commons.codec.digest.DigestUtils;
@@ -19,9 +17,7 @@ import com.angelbroking.smartapi.models.GttParams;
 import com.angelbroking.smartapi.models.Order;
 import com.angelbroking.smartapi.models.OrderParams;
 import com.angelbroking.smartapi.models.TokenSet;
-import com.angelbroking.smartapi.models.Trade;
 import com.angelbroking.smartapi.models.User;
-import com.google.gson.Gson;
 
 public class SmartConnect {
 	public static SessionExpiryHook sessionExpiryHook = null;
@@ -32,7 +28,6 @@ public class SmartConnect {
 	private String refreshToken;
 	private Routes routes = new Routes();
 	private String userId;
-	private Gson gson;
 	private SmartAPIRequestHandler smartAPIRequestHandler;
 
 	public void setApiKey(String apiKey) {
