@@ -10,10 +10,10 @@ public class Test {
 	public static void main(String[] args) throws SmartAPIException {
 		try {
 
-			SmartConnect smartConnect = new SmartConnect();
-
-			// PROVIDE YOUR API KEY HERE
-			smartConnect.setApiKey("smartapi_key");
+			SmartConnect smartConnect = new SmartConnect("<smartapi_key>"); // PROVIDE YOUR API KEY HERE
+			
+			// OPTIONAL - ACCESS_TOKEN AND REFRESH TOKEN
+			// SmartConnect smartConnect = new SmartConnect("<smartapi_key>", "<YOUR_ACCESS_TOKEN>", "<YOUR_REFRESH_TOKEN>");
 
 			// Set session expiry callback.
 			smartConnect.setSessionExpiryHook(new SessionExpiryHook() {
@@ -23,7 +23,7 @@ public class Test {
 				}
 			});
 
-			User user = smartConnect.generateSession("S212741","pass@123");
+			User user = smartConnect.generateSession("S212741","*********");
 			System.out.println(user.getAccessToken());
 			smartConnect.setAccessToken(user.getAccessToken());
 			smartConnect.setUserId(user.getUserId());
@@ -68,6 +68,7 @@ public class Test {
 //			examples.getPosition(smartConnect);
 //
 			System.out.println("convertPosition");
+<<<<<<< HEAD
 //			examples.convertPosition(smartConnect);
 		
 			System.out.println("createRule");
@@ -79,15 +80,36 @@ public class Test {
 			System.out.println("cancelRule");
 //			examples.cancelRule(smartConnect);
 			
+=======
+			examples.convertPosition(smartConnect);
+
+			System.out.println("createRule");
+			examples.createRule(smartConnect);
+
+			System.out.println("ModifyRule");
+			examples.modifyRule(smartConnect);
+
+			System.out.println("cancelRule");
+			examples.cancelRule(smartConnect);
+
+>>>>>>> 19f1a71f12e4d6e730d6e8e69948bf9a95102d2b
 			System.out.println("Rule Details");
 //			examples.ruleDetails(smartConnect);
 //			
 			System.out.println("Rule List");
+<<<<<<< HEAD
 //			examples.ruleList(smartConnect);
 		
 			System.out.println("Historic candle Data");
 //			examples.getCandleData(smartConnect);
 			
+=======
+			examples.ruleList(smartConnect);
+
+			System.out.println("Historic candle Data");
+			examples.getCandleData(smartConnect);
+
+>>>>>>> 19f1a71f12e4d6e730d6e8e69948bf9a95102d2b
 			System.out.println("logout");
 //			examples.logout(smartConnect);
 
@@ -99,7 +121,11 @@ public class Test {
 			String feedToken = user.getFeedToken();
 			String strWatchListScript = "nse_cm|2885&nse_cm|1594&nse_cm|11536&mcx_fo|221658";
 			String task = "mw";
+<<<<<<< HEAD
 //			examples.tickerUsage(clientId, feedToken, strWatchListScript, task);
+=======
+			// examples.tickerUsage(clientId, feedToken, strWatchListScript, task);
+>>>>>>> 19f1a71f12e4d6e730d6e8e69948bf9a95102d2b
 
 		} catch (Exception e) {
 			System.out.println("Exception: " + e.getMessage());

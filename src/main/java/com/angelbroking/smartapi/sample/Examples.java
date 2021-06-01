@@ -229,6 +229,7 @@ public class Examples {
 			@Override
 			public void onConnected() {
 				tickerProvider.subscribe(strWatchListScript, task);
+				//tickerProvider.runScript(strWatchListScript, task);
 			}
 		});
 
