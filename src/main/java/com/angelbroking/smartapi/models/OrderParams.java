@@ -63,9 +63,15 @@ public class OrderParams {
 	 */
 
 	public String tradingsymbol;
-
+	
+	public String triggerprice;
+	
 	public String squareoff;
+	
 	public String stoploss;
+	
 	public String symboltoken;
+	
+	
 
 }

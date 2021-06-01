@@ -283,16 +283,19 @@ public class SmartConnect {
 			params.put("price", orderParams.price);
 		if (orderParams.symboltoken != null)
 			params.put("symboltoken", orderParams.symboltoken);
-		if (orderParams.squareoff != null)
+		if (orderParams.squareoff != null) 
 			params.put("squareoff", orderParams.squareoff);
 		if (orderParams.stoploss != null)
 			params.put("stoploss", orderParams.stoploss);
+		if (orderParams.triggerprice != null)
+			params.put("triggerprice", orderParams.triggerprice);
 
 		params.put("variety", variety);
 
 		JSONObject jsonObject = smartAPIRequestHandler.postRequest(this.apiKey, url, params, accessToken);
 		Order order = new Order();
 		order.orderId = jsonObject.getJSONObject("data").getString("orderid");
+		System.out.println(order);
 		return order;
 		}
 		catch(Exception | SmartAPIException e) {

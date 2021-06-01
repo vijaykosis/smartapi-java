@@ -33,20 +33,21 @@ public class Examples {
 	public void placeOrder(SmartConnect smartConnect) throws SmartAPIException, IOException {
 
 		OrderParams orderParams = new OrderParams();
-		orderParams.variety = "NORMAL";
-		orderParams.quantity = 1;
-		orderParams.symboltoken = "3045";
+		orderParams.variety = "STOPLOSS";
+		orderParams.quantity = 323;
+		orderParams.symboltoken = "1660";
 		orderParams.exchange = Constants.EXCHANGE_NSE;
-		orderParams.ordertype = Constants.ORDER_TYPE_LIMIT;
-		orderParams.tradingsymbol = "SBIN-EQ";
+		orderParams.ordertype = "STOPLOSS_LIMIT";
+		orderParams.tradingsymbol = "ITC-EQ";
 		orderParams.producttype = Constants.PRODUCT_INTRADAY;
 		orderParams.duration = Constants.VALIDITY_DAY;
 		orderParams.transactiontype = Constants.TRANSACTION_TYPE_BUY;
 		orderParams.price = 122.2;
-		orderParams.squareoff = "0";
-		orderParams.stoploss = "0";
+		orderParams.triggerprice="209";		
 
-		Order order = smartConnect.placeOrder(orderParams, Constants.VARIETY_REGULAR);
+		
+		Order order = smartConnect.placeOrder(orderParams,"STOPLOSS");
+		System.out.print(order);
 	}
 
 	/** Modify order. */
