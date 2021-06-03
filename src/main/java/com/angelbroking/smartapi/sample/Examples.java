@@ -33,11 +33,11 @@ public class Examples {
 	public void placeOrder(SmartConnect smartConnect) throws SmartAPIException, IOException {
 
 		OrderParams orderParams = new OrderParams();
-		orderParams.variety = "STOPLOSS";
+		orderParams.variety = Constants.VARIETY_STOPLOSS;
 		orderParams.quantity = 323;
 		orderParams.symboltoken = "1660";
 		orderParams.exchange = Constants.EXCHANGE_NSE;
-		orderParams.ordertype = "STOPLOSS_LIMIT";
+		orderParams.ordertype = Constants.ORDER_TYPE_STOPLOSS_LIMIT;
 		orderParams.tradingsymbol = "ITC-EQ";
 		orderParams.producttype = Constants.PRODUCT_INTRADAY;
 		orderParams.duration = Constants.VALIDITY_DAY;

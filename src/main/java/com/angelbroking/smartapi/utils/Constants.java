@@ -18,13 +18,15 @@ public class Constants {
     public static String ORDER_TYPE_LIMIT = "LIMIT";
     public static String ORDER_TYPE_SL = "SL";
     public static String ORDER_TYPE_SLM = "SL-M";
+    public static String ORDER_TYPE_STOPLOSS_LIMIT = "STOPLOSS_LIMIT";
 
     /** Variety types. */
     public static String VARIETY_REGULAR = "NORMAL";
     public static String VARIETY_BO = "bo";
     public static String VARIETY_CO = "co";
     public static String VARIETY_AMO = "amo";
-
+    public static String VARIETY_STOPLOSS = "STOPLOSS";
+    
     /** Transaction types. */
     public static String TRANSACTION_TYPE_BUY = "BUY";
     public static String TRANSACTION_TYPE_SELL = "SELL";

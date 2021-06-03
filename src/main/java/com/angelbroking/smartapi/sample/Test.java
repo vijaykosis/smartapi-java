@@ -68,19 +68,6 @@ public class Test {
 //			examples.getPosition(smartConnect);
 //
 			System.out.println("convertPosition");
-<<<<<<< HEAD
-//			examples.convertPosition(smartConnect);
-		
-			System.out.println("createRule");
-//			examples.createRule(smartConnect);
-			
-			System.out.println("ModifyRule");
-//			examples.modifyRule(smartConnect);
-			
-			System.out.println("cancelRule");
-//			examples.cancelRule(smartConnect);
-			
-=======
 			examples.convertPosition(smartConnect);
 
 			System.out.println("createRule");
@@ -92,24 +79,15 @@ public class Test {
 			System.out.println("cancelRule");
 			examples.cancelRule(smartConnect);
 
->>>>>>> 19f1a71f12e4d6e730d6e8e69948bf9a95102d2b
 			System.out.println("Rule Details");
 //			examples.ruleDetails(smartConnect);
 //			
 			System.out.println("Rule List");
-<<<<<<< HEAD
-//			examples.ruleList(smartConnect);
-		
-			System.out.println("Historic candle Data");
-//			examples.getCandleData(smartConnect);
-			
-=======
 			examples.ruleList(smartConnect);
 
 			System.out.println("Historic candle Data");
 			examples.getCandleData(smartConnect);
 
->>>>>>> 19f1a71f12e4d6e730d6e8e69948bf9a95102d2b
 			System.out.println("logout");
 //			examples.logout(smartConnect);
 
@@ -121,11 +99,9 @@ public class Test {
 			String feedToken = user.getFeedToken();
 			String strWatchListScript = "nse_cm|2885&nse_cm|1594&nse_cm|11536&mcx_fo|221658";
 			String task = "mw";
-<<<<<<< HEAD
-//			examples.tickerUsage(clientId, feedToken, strWatchListScript, task);
-=======
+
 			// examples.tickerUsage(clientId, feedToken, strWatchListScript, task);
->>>>>>> 19f1a71f12e4d6e730d6e8e69948bf9a95102d2b
+
 
 		} catch (Exception e) {
 			System.out.println("Exception: " + e.getMessage());

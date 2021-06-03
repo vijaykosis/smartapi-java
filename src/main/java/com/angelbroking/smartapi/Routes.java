@@ -59,10 +59,7 @@ public class Routes {
 	public String getWsuri() {
 		return _wsuri;
 	}
-<<<<<<< HEAD
-=======
 
->>>>>>> 19f1a71f12e4d6e730d6e8e69948bf9a95102d2b
 	public String getSWsuri() {
 		return _swsuri;
 	}
