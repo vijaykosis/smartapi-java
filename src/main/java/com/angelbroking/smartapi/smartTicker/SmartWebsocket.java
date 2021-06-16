@@ -32,26 +32,31 @@ public class SmartWebsocket {
 
 	private Routes routes = new Routes();
 	private final String wsuri = routes.getSWsuri();
-	private OnTicks onTickerArrivalListener;
-	private OnConnect onConnectedListener;
-	private OnDisconnect onDisconnectedListener;
-	private OnError onErrorListener;
+	private SmartWSOnTicks onTickerArrivalListener;
+	private SmartWSOnConnect onConnectedListener;
+	private SmartWSOnDisconnect onDisconnectedListener;
+	private SmartWSOnError onErrorListener;
 	private WebSocket ws;
 	private String clientId;
 	private String jwtToken;
 	private String apiKey;
+	private String actionType;
+	private String feedType;
 
 	/**
 	 * Initialize SmartAPITicker.
 	 */
-	public SmartWebsocket(String clientId, String jwtToken,String apiKey) {
+	public SmartWebsocket(String clientId, String jwtToken, String apiKey, String actionType, String feedType) {
 
 		this.clientId = clientId;
 		this.jwtToken = jwtToken;
-		this.apiKey= apiKey;
+		this.apiKey = apiKey;
+		this.actionType = actionType;
+		this.feedType = feedType;
 
 		try {
-			String swsuri=wsuri+"?jwttoken="+this.jwtToken+"&&clientcode="+this.clientId+"&&apikey="+this.apiKey;
+			String swsuri = wsuri + "?jwttoken=" + this.jwtToken + "&&clientcode=" + this.clientId + "&&apikey="
+					+ this.apiKey;
 			SSLContext context = NaiveSSLContext.getInstance("TLS");
 			ws = new WebSocketFactory().setSSLContext(context).setVerifyHostname(false).createSocket(swsuri);
 
@@ -74,7 +79,7 @@ public class SmartWebsocket {
 	 * @param listener of type OnError which listens to all the type of errors that
 	 *                 may arise in SmartAPITicker class.
 	 */
-	public void setOnErrorListener(OnError listener) {
+	public void setOnErrorListener(SmartWSOnError listener) {
 		onErrorListener = listener;
 	}
 
@@ -83,7 +88,7 @@ public class SmartWebsocket {
 	 * 
 	 * @param onTickerArrivalListener is listener which listens for each tick.
 	 */
-	public void setOnTickerArrivalListener(OnTicks onTickerArrivalListener) {
+	public void setOnTickerArrivalListener(SmartWSOnTicks onTickerArrivalListener) {
 		this.onTickerArrivalListener = onTickerArrivalListener;
 	}
 
@@ -92,7 +97,7 @@ public class SmartWebsocket {
 	 * 
 	 * @param listener is used to listen to onConnected event.
 	 */
-	public void setOnConnectedListener(OnConnect listener) {
+	public void setOnConnectedListener(SmartWSOnConnect listener) {
 		onConnectedListener = listener;
 	}
 
@@ -101,7 +106,7 @@ public class SmartWebsocket {
 	 * 
 	 * @param listener is used to listen to onDisconnected event.
 	 */
-	public void setOnDisconnectedListener(OnDisconnect listener) {
+	public void setOnDisconnectedListener(SmartWSOnDisconnect listener) {
 		onDisconnectedListener = listener;
 	}
 
@@ -111,21 +116,12 @@ public class SmartWebsocket {
 
 			@Override
 			public void onConnected(WebSocket websocket, Map<String, List<String>> headers) throws WebSocketException {
-				// Send a text frame.
-//				JSONObject wsCNJSONRequest = new JSONObject();
-//				wsCNJSONRequest.put("task", "cn");
-//				wsCNJSONRequest.put("channel", "");
-//				wsCNJSONRequest.put("token", feedToken);
-//				wsCNJSONRequest.put("user", clientId);
-//				wsCNJSONRequest.put("acctid", clientId);
-//				ws.sendText(wsCNJSONRequest.toString());
 				onConnectedListener.onConnected();
-
 				Runnable runnable = new Runnable() {
 					public void run() {
 						JSONObject wsMWJSONRequest = new JSONObject();
-						wsMWJSONRequest.put("actiontype", "heartbeat");
-						wsMWJSONRequest.put("feedtype", "order_feed");
+						wsMWJSONRequest.put("actiontype", actionType);
+						wsMWJSONRequest.put("feedtype", feedType);
 						wsMWJSONRequest.put("jwttoken", jwtToken);
 						wsMWJSONRequest.put("clientcode", clientId);
 						wsMWJSONRequest.put("apikey", apiKey);
@@ -133,10 +129,7 @@ public class SmartWebsocket {
 					}
 				};
 
-				ScheduledExecutorService service = Executors
-
-						.newSingleThreadScheduledExecutor();
-
+				ScheduledExecutorService service = Executors.newSingleThreadScheduledExecutor();
 				service.scheduleAtFixedRate(runnable, 0, 1, TimeUnit.MINUTES);
 
 			}
@@ -224,14 +217,14 @@ public class SmartWebsocket {
 	/**
 	 * Subscribes script.
 	 */
-	public void subscribe(String actionType, String feedType) {
+	public void runscript() {
 
 		if (ws != null) {
 			if (ws.isOpen()) {
 
 				JSONObject wsMWJSONRequest = new JSONObject();
-				wsMWJSONRequest.put("actiontype", actionType);
-				wsMWJSONRequest.put("feedtype", feedType);
+				wsMWJSONRequest.put("actiontype", this.actionType);
+				wsMWJSONRequest.put("feedtype", this.feedType);
 				wsMWJSONRequest.put("jwttoken", this.jwtToken);
 				wsMWJSONRequest.put("clientcode", this.clientId);
 				wsMWJSONRequest.put("apikey", this.apiKey);

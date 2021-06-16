@@ -1,5 +1,5 @@
 package com.angelbroking.smartapi.smartTicker;
 
-public interface OnDisconnect {
+public interface SmartWSOnDisconnect {
 	void onDisconnected();
 }

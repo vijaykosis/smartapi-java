@@ -1,5 +1,5 @@
 package com.angelbroking.smartapi.smartTicker;
 
-public interface OnConnect {
+public interface SmartWSOnConnect {
     void onConnected();
 }

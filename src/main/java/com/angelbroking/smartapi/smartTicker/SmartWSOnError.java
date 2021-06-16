@@ -2,7 +2,7 @@ package com.angelbroking.smartapi.smartTicker;
 
 import com.angelbroking.smartapi.http.exceptions.SmartAPIException;
 
-public interface OnError {
+public interface SmartWSOnError {
 
 	public void onError(Exception exception);
 

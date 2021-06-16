@@ -34,23 +34,27 @@ public class SmartAPITicker {
 	private final String wsuri = routes.getWsuri();;
 	private OnTicks onTickerArrivalListener;
 	private OnConnect onConnectedListener;
-	private OnDisconnect onDisconnectedListener;
 	private OnError onErrorListener;
 	private WebSocket ws;
 	private String clientId;
 	private String feedToken;
+	private String script;
+	private String task;
+	private SSLContext context;
 
 	/**
 	 * Initialize SmartAPITicker.
 	 */
-	public SmartAPITicker(String clientId, String feedToken) {
+	public SmartAPITicker(String clientId, String feedToken, String script, String task) {
 
 		this.clientId = clientId;
 		this.feedToken = feedToken;
+		this.script = script;
+		this.task = task;
 
 		try {
 
-			SSLContext context = NaiveSSLContext.getInstance("TLS");
+			context = NaiveSSLContext.getInstance("TLS");
 			ws = new WebSocketFactory().setSSLContext(context).setVerifyHostname(false).createSocket(wsuri);
 
 		} catch (IOException e) {
@@ -66,15 +70,15 @@ public class SmartAPITicker {
 
 	}
 
-	/**
-	 * Set error listener.
-	 * 
-	 * @param listener of type OnError which listens to all the type of errors that
-	 *                 may arise in SmartAPITicker class.
-	 */
-	public void setOnErrorListener(OnError listener) {
-		onErrorListener = listener;
-	}
+//	/**
+//	 * Set error listener.
+//	 * 
+//	 * @param listener of type OnError which listens to all the type of errors that
+//	 *                 may arise in SmartAPITicker class.
+//	 */
+//	public void setOnErrorListener(OnError listener) {
+//		onErrorListener = listener;
+//	}
 
 	/**
 	 * Set listener for listening to ticks.
@@ -94,14 +98,14 @@ public class SmartAPITicker {
 		onConnectedListener = listener;
 	}
 
-	/**
-	 * Set listener for on connection is disconnected.
-	 * 
-	 * @param listener is used to listen to onDisconnected event.
-	 */
-	public void setOnDisconnectedListener(OnDisconnect listener) {
-		onDisconnectedListener = listener;
-	}
+//	/**
+//	 * Set listener for on connection is disconnected.
+//	 * 
+//	 * @param listener is used to listen to onDisconnected event.
+//	 */
+//	public void setOnDisconnectedListener(OnDisconnect listener) {
+//		onDisconnectedListener = listener;
+//	}
 
 	/** Returns a WebSocketAdapter to listen to ticker related events. */
 	public WebSocketAdapter getWebsocketAdapter() {
@@ -176,24 +180,17 @@ public class SmartAPITicker {
 			@Override
 			public void onDisconnected(WebSocket websocket, WebSocketFrame serverCloseFrame,
 					WebSocketFrame clientCloseFrame, boolean closedByServer) {
-				if (onDisconnectedListener != null) {
-					onDisconnectedListener.onDisconnected();
-				}
-				return;
-			}
 
-			@Override
-			public void onError(WebSocket websocket, WebSocketException cause) {
 				try {
-					super.onError(websocket, cause);
+					context = NaiveSSLContext.getInstance("TLS");
+					ws = new WebSocketFactory().setSSLContext(context).setVerifyHostname(false).createSocket(wsuri);
+					ws.addListener(getWebsocketAdapter());
+					connect();
+
 				} catch (Exception e) {
 					e.printStackTrace();
-					if (onErrorListener != null) {
-						onErrorListener.onError(e);
-					}
 				}
 			}
-
 		};
 	}
 
@@ -222,14 +219,14 @@ public class SmartAPITicker {
 	/**
 	 * Subscribes script.
 	 */
-	public void subscribe(String script, String task) {
+	public void subscribe() {
 
 		if (ws != null) {
 			if (ws.isOpen()) {
 
 				JSONObject wsMWJSONRequest = new JSONObject();
-				wsMWJSONRequest.put("task", task);
-				wsMWJSONRequest.put("channel", script);
+				wsMWJSONRequest.put("task", this.task);
+				wsMWJSONRequest.put("channel", this.script);
 				wsMWJSONRequest.put("token", this.feedToken);
 				wsMWJSONRequest.put("user", this.clientId);
 				wsMWJSONRequest.put("acctid", this.clientId);
@@ -251,26 +248,20 @@ public class SmartAPITicker {
 	/**
 	 * runSript script.
 	 */
-	public void runScript(String script, String task) {
+	public void resubscribe() {
 
 		if (ws != null) {
 			if (ws.isOpen()) {
-				if (task != null) {
-					if (task == "mw" || task == "sfi" || task == "dp") {
-						JSONObject wsMWJSONRequest = new JSONObject();
-						wsMWJSONRequest.put("task", task);
-						wsMWJSONRequest.put("channel", script);
-						wsMWJSONRequest.put("token", this.feedToken);
-						wsMWJSONRequest.put("user", this.clientId);
-						wsMWJSONRequest.put("acctid", this.clientId);
 
-						ws.sendText(wsMWJSONRequest.toString());
-					} else {
-						onErrorListener.onError(new SmartAPIException("task is unknown", "400"));
-					}
-				} else {
-					onErrorListener.onError(new SmartAPIException("task is null", "400"));
-				}
+				JSONObject wsMWJSONRequest = new JSONObject();
+				wsMWJSONRequest.put("task", this.task);
+				wsMWJSONRequest.put("channel", this.script);
+				wsMWJSONRequest.put("token", this.feedToken);
+				wsMWJSONRequest.put("user", this.clientId);
+				wsMWJSONRequest.put("acctid", this.clientId);
+
+				ws.sendText(wsMWJSONRequest.toString());
+
 			} else {
 				if (onErrorListener != null) {
 					onErrorListener.onError(new SmartAPIException("ticker is not connected", "504"));
