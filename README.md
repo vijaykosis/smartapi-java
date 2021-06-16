@@ -243,48 +243,35 @@ For more details, take a look at Examples.java in sample directory.
 
 ```java
 
-	// SmartAPITicker
-	String clientId = "<clientID>";
-			
-	// feedToken - User user = smartConnect.generateSession(<clientId>, <password>);
+	/* SmartAPITicker */
+	String clientId = "<clientId>";
+	User user = smartConnect.generateSession("<clientId>", "<password>");
 	String feedToken = user.getFeedToken();
-	String strWatchListScript = "nse_cm|2885&nse_cm|1594&nse_cm|11536";
+	String strWatchListScript = "nse_cm|2885&nse_cm|1594&nse_cm|11536&mcx_fo|221658";
 	String task = "mw";
-			
+
+	examples.tickerUsage(clientId, feedToken, strWatchListScript, task);
+
+	/*
+	* String jwtToken = user.getAccessToken(); 
+	* String apiKey = "<api_key>";
+	* String actionType = "subscribe"; String feedType = "order_feed";
+	* 
+	* examples.smartWebSocketUsage(clientId, jwtToken, apiKey, actionType,
+	* feedType);
+	* 
+	*/
+	
 	public void tickerUsage(String clientId, String feedToken, String strWatchListScript, String task)
 			throws SmartAPIException {
 
-		SmartAPITicker tickerProvider = new SmartAPITicker(clientId, feedToken);
+		SmartAPITicker tickerProvider = new SmartAPITicker(clientId, feedToken, strWatchListScript, task);
 
 		tickerProvider.setOnConnectedListener(new OnConnect() {
 			@Override
 			public void onConnected() {
-				tickerProvider.subscribe(strWatchListScript, task);
-			}
-		});
-
-		tickerProvider.setOnDisconnectedListener(new OnDisconnect() {
-			@Override
-			public void onDisconnected() {
-				System.out.println("onDisconnected");
-			}
-		});
-
-		/** Set error listener to listen to errors. */
-		tickerProvider.setOnErrorListener(new OnError() {
-			@Override
-			public void onError(Exception exception) {
-				System.out.println("onError: " + exception.getMessage());
-			}
-
-			@Override
-			public void onError(SmartAPIException smartAPIException) {
-				System.out.println("onError: " + smartAPIException.getMessage());
-			}
-
-			@Override
-			public void onError(String error) {
-				System.out.println("onError: " + error);
+				System.out.println("subscribe() called!");
+				tickerProvider.subscribe();
 			}
 		});
 
@@ -309,6 +296,69 @@ For more details, take a look at Examples.java in sample directory.
 
 		// After using SmartAPI ticker, close websocket connection.
 		// tickerProvider.disconnect();
+
+	}
+			
+	public void smartWebSocketUsage(String clientId, String jwtToken, String apiKey, String actionType, String feedType)
+			throws SmartAPIException {
+
+		SmartWebsocket smartWebsocket = new SmartWebsocket(clientId, jwtToken, apiKey, actionType, feedType);
+
+		smartWebsocket.setOnConnectedListener(new SmartWSOnConnect() {
+
+			@Override
+			public void onConnected() {
+
+				smartWebsocket.runscript();
+			}
+		});
+
+		smartWebsocket.setOnDisconnectedListener(new SmartWSOnDisconnect() {
+			@Override
+			public void onDisconnected() {
+				System.out.println("onDisconnected");
+			}
+		});
+
+		/** Set error listener to listen to errors. */
+		smartWebsocket.setOnErrorListener(new SmartWSOnError() {
+			@Override
+			public void onError(Exception exception) {
+				System.out.println("onError: " + exception.getMessage());
+			}
+
+			@Override
+			public void onError(SmartAPIException smartAPIException) {
+				System.out.println("onError: " + smartAPIException.getMessage());
+			}
+
+			@Override
+			public void onError(String error) {
+				System.out.println("onError: " + error);
+			}
+		});
+
+		smartWebsocket.setOnTickerArrivalListener(new SmartWSOnTicks() {
+			@Override
+			public void onTicks(JSONArray ticks) {
+				System.out.println("ticker data: " + ticks.toString());
+			}
+		});
+
+		/**
+		 * connects to Smart API ticker server for getting live quotes
+		 */
+		smartWebsocket.connect();
+
+		/**
+		 * You can check, if websocket connection is open or not using the following
+		 * method.
+		 */
+		boolean isConnected = smartWebsocket.isConnectionOpen();
+		System.out.println(isConnected);
+
+		// After using SmartAPI ticker, close websocket connection.
+		// smartWebsocket.disconnect();
 
 	}
 
