@@ -265,46 +265,45 @@ public class SmartConnect {
 	public Order placeOrder(OrderParams orderParams, String variety) {
 
 		try {
-		String url = routes.get("api.order.place");
+			String url = routes.get("api.order.place");
 
-		JSONObject params = new JSONObject();
+			JSONObject params = new JSONObject();
 
-		if (orderParams.exchange != null)
-			params.put("exchange", orderParams.exchange);
-		if (orderParams.tradingsymbol != null)
-			params.put("tradingsymbol", orderParams.tradingsymbol);
-		if (orderParams.transactiontype != null)
-			params.put("transactiontype", orderParams.transactiontype);
-		if (orderParams.quantity != null)
-			params.put("quantity", orderParams.quantity);
-		if (orderParams.price != null)
-			params.put("price", orderParams.price);
-		if (orderParams.producttype != null)
-			params.put("producttype", orderParams.producttype);
-		if (orderParams.ordertype != null)
-			params.put("ordertype", orderParams.ordertype);
-		if (orderParams.duration != null)
-			params.put("duration", orderParams.duration);
-		if (orderParams.price != null)
-			params.put("price", orderParams.price);
-		if (orderParams.symboltoken != null)
-			params.put("symboltoken", orderParams.symboltoken);
-		if (orderParams.squareoff != null) 
-			params.put("squareoff", orderParams.squareoff);
-		if (orderParams.stoploss != null)
-			params.put("stoploss", orderParams.stoploss);
-		if (orderParams.triggerprice != null)
-			params.put("triggerprice", orderParams.triggerprice);
+			if (orderParams.exchange != null)
+				params.put("exchange", orderParams.exchange);
+			if (orderParams.tradingsymbol != null)
+				params.put("tradingsymbol", orderParams.tradingsymbol);
+			if (orderParams.transactiontype != null)
+				params.put("transactiontype", orderParams.transactiontype);
+			if (orderParams.quantity != null)
+				params.put("quantity", orderParams.quantity);
+			if (orderParams.price != null)
+				params.put("price", orderParams.price);
+			if (orderParams.producttype != null)
+				params.put("producttype", orderParams.producttype);
+			if (orderParams.ordertype != null)
+				params.put("ordertype", orderParams.ordertype);
+			if (orderParams.duration != null)
+				params.put("duration", orderParams.duration);
+			if (orderParams.price != null)
+				params.put("price", orderParams.price);
+			if (orderParams.symboltoken != null)
+				params.put("symboltoken", orderParams.symboltoken);
+			if (orderParams.squareoff != null)
+				params.put("squareoff", orderParams.squareoff);
+			if (orderParams.stoploss != null)
+				params.put("stoploss", orderParams.stoploss);
+			if (orderParams.triggerprice != null)
+				params.put("triggerprice", orderParams.triggerprice);
 
-		params.put("variety", variety);
+			params.put("variety", variety);
 
-		JSONObject jsonObject = smartAPIRequestHandler.postRequest(this.apiKey, url, params, accessToken);
-		Order order = new Order();
-		order.orderId = jsonObject.getJSONObject("data").getString("orderid");
-		System.out.println(order);
-		return order;
-		}
-		catch(Exception | SmartAPIException e) {
+			JSONObject jsonObject = smartAPIRequestHandler.postRequest(this.apiKey, url, params, accessToken);
+			Order order = new Order();
+			order.orderId = jsonObject.getJSONObject("data").getString("orderid");
+			System.out.println(order);
+			return order;
+		} catch (Exception | SmartAPIException e) {
 			System.out.println(e.getMessage());
 			return null;
 		}
@@ -471,11 +470,11 @@ public class SmartConnect {
 	 * @return Object of Holding.
 	 * 
 	 */
-	public JSONObject getHolding() {
+	public JSONArray getHolding() {
 		try {
 			String url = routes.get("api.order.rms.holding");
 			JSONObject response = smartAPIRequestHandler.getRequest(this.apiKey, url, accessToken);
-			return response.getJSONObject("data");
+			return response.getJSONArray("data");
 		} catch (Exception | SmartAPIException e) {
 			System.out.println(e.getMessage());
 			return null;

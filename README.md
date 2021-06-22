@@ -123,7 +123,7 @@ Smart API is a set of REST-like APIs that expose many capabilities required to b
 	/** Get Holdings */
 	public void getHolding(SmartConnect smartConnect) throws SmartAPIException, IOException {
 		// Returns Holding.
-		JSONObject response = smartConnect.getHolding();
+		JSONArray response = smartConnect.getHolding();
 	}
 
 	/** Get Position */

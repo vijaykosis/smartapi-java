@@ -116,7 +116,7 @@ public class Examples {
 	/** Get Holdings */
 	public void getHolding(SmartConnect smartConnect) throws SmartAPIException, IOException {
 		// Returns Holding.
-		JSONObject response = smartConnect.getHolding();
+		JSONArray response = smartConnect.getHolding();
 	}
 
 	/** Get Position */
