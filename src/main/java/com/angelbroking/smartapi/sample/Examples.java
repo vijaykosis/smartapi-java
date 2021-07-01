@@ -116,7 +116,7 @@ public class Examples {
 	/** Get Holdings */
 	public void getHolding(SmartConnect smartConnect) throws SmartAPIException, IOException {
 		// Returns Holding.
-		JSONArray response = smartConnect.getHolding();
+		JSONObject response = smartConnect.getHolding();
 	}
 
 	/** Get Position */
@@ -137,7 +137,7 @@ public class Examples {
 		requestObejct.put("quantity", 1);
 		requestObejct.put("type", "DAY");
 
-		JSONObject response = smartConnect.getPosition();
+		JSONObject response = smartConnect.convertPosition(requestObejct);
 	}
 
 	/** Create Gtt Rule */

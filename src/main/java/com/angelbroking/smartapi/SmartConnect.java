@@ -470,11 +470,11 @@ public class SmartConnect {
 	 * @return Object of Holding.
 	 * 
 	 */
-	public JSONArray getHolding() {
+	public JSONObject getHolding() {
 		try {
 			String url = routes.get("api.order.rms.holding");
 			JSONObject response = smartAPIRequestHandler.getRequest(this.apiKey, url, accessToken);
-			return response.getJSONArray("data");
+			return response;
 		} catch (Exception | SmartAPIException e) {
 			System.out.println(e.getMessage());
 			return null;
@@ -491,7 +491,7 @@ public class SmartConnect {
 		try {
 			String url = routes.get("api.order.rms.position");
 			JSONObject response = smartAPIRequestHandler.getRequest(this.apiKey, url, accessToken);
-			return response.getJSONObject("data");
+			return response;
 		} catch (Exception | SmartAPIException e) {
 			System.out.println(e.getMessage());
 			return null;
@@ -511,7 +511,7 @@ public class SmartConnect {
 		try {
 			String url = routes.get("api.order.rms.position.convert");
 			JSONObject response = smartAPIRequestHandler.postRequest(this.apiKey, url, params, accessToken);
-			return response.getJSONObject("data");
+			return response;
 		} catch (Exception | SmartAPIException e) {
 			System.out.println(e.getMessage());
 			return null;

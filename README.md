@@ -123,7 +123,7 @@ Smart API is a set of REST-like APIs that expose many capabilities required to b
 	/** Get Holdings */
 	public void getHolding(SmartConnect smartConnect) throws SmartAPIException, IOException {
 		// Returns Holding.
-		JSONArray response = smartConnect.getHolding();
+		JSONObject response = smartConnect.getHolding();
 	}
 
 	/** Get Position */
@@ -144,8 +144,9 @@ Smart API is a set of REST-like APIs that expose many capabilities required to b
 		requestObejct.put("quantity", 1);
 		requestObejct.put("type", "DAY");
 
-		JSONObject response = smartConnect.getPosition();
+		JSONObject response = smartConnect.convertPosition(requestObejct);
 	}
+	
 	/** Create Gtt Rule*/
 	public void createRule(SmartConnect smartConnect)throws SmartAPIException,IOException{
 		GttParams gttParams= new GttParams();
