@@ -20,8 +20,6 @@ import com.angelbroking.smartapi.smartTicker.SmartWSOnError;
 import com.angelbroking.smartapi.smartTicker.SmartWSOnTicks;
 import com.angelbroking.smartapi.smartTicker.SmartWebsocket;
 import com.angelbroking.smartapi.ticker.OnConnect;
-import com.angelbroking.smartapi.ticker.OnDisconnect;
-import com.angelbroking.smartapi.ticker.OnError;
 import com.angelbroking.smartapi.ticker.OnTicks;
 import com.angelbroking.smartapi.ticker.SmartAPITicker;
 import com.angelbroking.smartapi.utils.Constants;
@@ -32,6 +30,55 @@ public class Examples {
 	public void getProfile(SmartConnect smartConnect) throws IOException, SmartAPIException {
 		User profile = smartConnect.getProfile();
 	}
+
+	/** CONSTANT Details */
+
+	/* VARIETY */
+	/*
+	 * VARIETY_NORMAL: Normal Order (Regular) 
+	 * VARIETY_AMO: After Market Order
+	 * VARIETY_STOPLOSS: Stop loss order 
+	 * VARIETY_ROBO: ROBO (Bracket) Order
+	 */
+	/* TRANSACTION TYPE */
+	/*
+	 * TRANSACTION_TYPE_BUY: Buy TRANSACTION_TYPE_SELL: Sell
+	 */
+
+	/* ORDER TYPE */
+	/*
+	 * ORDER_TYPE_MARKET: Market Order(MKT) 
+	 * ORDER_TYPE_LIMIT: Limit Order(L)
+	 * ORDER_TYPE_STOPLOSS_LIMIT: Stop Loss Limit Order(SL)
+	 * ORDER_TYPE_STOPLOSS_MARKET: Stop Loss Market Order(SL-M)
+	 */
+
+	/* PRODUCT TYPE */
+	/*
+	 * PRODUCT_DELIVERY: Cash & Carry for equity (CNC) 
+	 * PRODUCT_CARRYFORWARD: Normal
+	 * for futures and options (NRML) 
+	 * PRODUCT_MARGIN: Margin Delivery
+	 * PRODUCT_INTRADAY: Margin Intraday Squareoff (MIS) 
+	 * PRODUCT_BO: Bracket Order
+	 * (Only for ROBO)
+	 */
+
+	/* DURATION */
+	/*
+	 * DURATION_DAY: Valid for a day 
+	 * DURATION_IOC: Immediate or Cancel
+	 */
+
+	/* EXCHANGE */
+	/*
+	 * EXCHANGE_BSE: BSE Equity 
+	 * EXCHANGE_NSE: NSE Equity 
+	 * EXCHANGE_NFO: NSE Future and Options 
+	 * EXCHANGE_CDS: NSE Currency 
+	 * EXCHANGE_NCDEX: NCDEX Commodity
+	 * EXCHANGE_MCX: MCX Commodity
+	 */
 
 	/** Place order. */
 	public void placeOrder(SmartConnect smartConnect) throws SmartAPIException, IOException {
@@ -44,7 +91,7 @@ public class Examples {
 		orderParams.ordertype = Constants.ORDER_TYPE_STOPLOSS_LIMIT;
 		orderParams.tradingsymbol = "ITC-EQ";
 		orderParams.producttype = Constants.PRODUCT_INTRADAY;
-		orderParams.duration = Constants.VALIDITY_DAY;
+		orderParams.duration = Constants.DURATION_DAY;
 		orderParams.transactiontype = Constants.TRANSACTION_TYPE_BUY;
 		orderParams.price = 122.2;
 		orderParams.triggerprice = "209";
@@ -64,11 +111,11 @@ public class Examples {
 		orderParams.symboltoken = "3045";
 		orderParams.producttype = Constants.PRODUCT_DELIVERY;
 		orderParams.exchange = Constants.EXCHANGE_NSE;
-		orderParams.duration = Constants.VALIDITY_DAY;
+		orderParams.duration = Constants.DURATION_DAY;
 		orderParams.price = 122.2;
 
 		String orderId = "201216000755110";
-		Order order = smartConnect.modifyOrder(orderId, orderParams, Constants.VARIETY_REGULAR);
+		Order order = smartConnect.modifyOrder(orderId, orderParams, Constants.VARIETY_NORMAL);
 	}
 
 	/** Cancel an order */
@@ -76,7 +123,7 @@ public class Examples {
 		// Order modify request will return order model which will contain only
 		// order_id.
 		// Cancel order will return order model which will only have orderId.
-		Order order = smartConnect.cancelOrder("201009000000015", Constants.VARIETY_REGULAR);
+		Order order = smartConnect.cancelOrder("201009000000015", Constants.VARIETY_NORMAL);
 	}
 
 	/** Get order details */

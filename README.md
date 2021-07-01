@@ -38,6 +38,55 @@ Smart API is a set of REST-like APIs that expose many capabilities required to b
 	TokenSet tokenSet = smartConnect.renewAccessToken(user.getAccessToken(),
 	user.getRefreshToken());
 	smartConnect.setAccessToken(tokenSet.getAccessToken());
+	
+	/** CONSTANT Details */
+
+	/* VARIETY */
+	/*
+	 * VARIETY_NORMAL: Normal Order (Regular) 
+	 * VARIETY_AMO: After Market Order
+	 * VARIETY_STOPLOSS: Stop loss order 
+	 * VARIETY_ROBO: ROBO (Bracket) Order
+	 */
+	/* TRANSACTION TYPE */
+	/*
+	 * TRANSACTION_TYPE_BUY: Buy TRANSACTION_TYPE_SELL: Sell
+	 */
+
+	/* ORDER TYPE */
+	/*
+	 * ORDER_TYPE_MARKET: Market Order(MKT) 
+	 * ORDER_TYPE_LIMIT: Limit Order(L)
+	 * ORDER_TYPE_STOPLOSS_LIMIT: Stop Loss Limit Order(SL)
+	 * ORDER_TYPE_STOPLOSS_MARKET: Stop Loss Market Order(SL-M)
+	 */
+
+	/* PRODUCT TYPE */
+	/*
+	 * PRODUCT_DELIVERY: Cash & Carry for equity (CNC) 
+	 * PRODUCT_CARRYFORWARD: Normal
+	 * for futures and options (NRML) 
+	 * PRODUCT_MARGIN: Margin Delivery
+	 * PRODUCT_INTRADAY: Margin Intraday Squareoff (MIS) 
+	 * PRODUCT_BO: Bracket Order
+	 * (Only for ROBO)
+	 */
+
+	/* DURATION */
+	/*
+	 * DURATION_DAY: Valid for a day 
+	 * DURATION_IOC: Immediate or Cancel
+	 */
+
+	/* EXCHANGE */
+	/*
+	 * EXCHANGE_BSE: BSE Equity 
+	 * EXCHANGE_NSE: NSE Equity 
+	 * EXCHANGE_NFO: NSE Future and Options 
+	 * EXCHANGE_CDS: NSE Currency 
+	 * EXCHANGE_NCDEX: NCDEX Commodity
+	 * EXCHANGE_MCX: MCX Commodity
+	 */
 
 	/** Place order. */
 	public void placeOrder(SmartConnect smartConnect) throws SmartAPIException, IOException {
