@@ -46,8 +46,9 @@ public class SmartStreamTickerTest {
 	private Set<TokenID> getTokens(){
 		// find out the required token from https://margincalculator.angelbroking.com/OpenAPI_File/files/OpenAPIScripMaster.json
 		Set<TokenID> tokenSet = new HashSet<>();
-		tokenSet.add(new TokenID(ExchangeType.NSE_CM, "26009")); // NIFTY BANK
+//		tokenSet.add(new TokenID(ExchangeType.NSE_CM, "26009")); // NIFTY BANK
 //		tokenSet.add(new TokenID(ExchangeType.NSE_CM, "4717")); // NSE Infosys
+		tokenSet.add(new TokenID(ExchangeType.NSE_CM, "19000"));
 		return tokenSet;
 	}
 	

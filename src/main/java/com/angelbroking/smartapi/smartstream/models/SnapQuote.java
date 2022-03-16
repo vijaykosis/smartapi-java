@@ -129,4 +129,77 @@ public class SnapQuote {
 	public void setClosePrice(long closePrice) {
 		this.closePrice = closePrice;
 	}
+
+	public long getLastTradedTimestamp() {
+		return lastTradedTimestamp;
+	}
+
+	public void setLastTradedTimestamp(long lastTradedTimestamp) {
+		this.lastTradedTimestamp = lastTradedTimestamp;
+	}
+
+	public long getOpenInterest() {
+		return openInterest;
+	}
+
+	public void setOpenInterest(long openInterest) {
+		this.openInterest = openInterest;
+	}
+
+	public double getOpenInterestChangePerc() {
+		return openInterestChangePerc;
+	}
+
+	public void setOpenInterestChangePerc(double openInterestChangePerc) {
+		this.openInterestChangePerc = openInterestChangePerc;
+	}
+
+	public SmartApiBBSInfo[] getBestFiveBuy() {
+		return bestFiveBuy;
+	}
+
+	public void setBestFiveBuy(SmartApiBBSInfo[] bestFiveBuy) {
+		this.bestFiveBuy = bestFiveBuy;
+	}
+
+	public SmartApiBBSInfo[] getBestFiveSell() {
+		return bestFiveSell;
+	}
+
+	public void setBestFiveSell(SmartApiBBSInfo[] bestFiveSell) {
+		this.bestFiveSell = bestFiveSell;
+	}
+
+	public long getUpperCircuit() {
+		return upperCircuit;
+	}
+
+	public void setUpperCircuit(long upperCircuit) {
+		this.upperCircuit = upperCircuit;
+	}
+
+	public long getLowerCircuit() {
+		return lowerCircuit;
+	}
+
+	public void setLowerCircuit(long lowerCircuit) {
+		this.lowerCircuit = lowerCircuit;
+	}
+
+	public long getYearlyHighPrice() {
+		return yearlyHighPrice;
+	}
+
+	public void setYearlyHighPrice(long yearlyHighPrice) {
+		this.yearlyHighPrice = yearlyHighPrice;
+	}
+
+	public long getYearlyLowPrice() {
+		return yearlyLowPrice;
+	}
+
+	public void setYearlyLowPrice(long yearlyLowPrice) {
+		this.yearlyLowPrice = yearlyLowPrice;
+	}
+	
 }

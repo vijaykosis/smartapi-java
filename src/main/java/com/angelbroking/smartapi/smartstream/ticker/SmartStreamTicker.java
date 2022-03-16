@@ -90,16 +90,8 @@ public class SmartStreamTicker {
 			}
 
 			@Override
-			public void onTextMessage(WebSocket websocket, String message) throws IOException, DataFormatException {
-//				byte[] decoded = Base64.getDecoder().decode(message);
-//				byte[] result = decompress(decoded);
-//				String str = new String(result, StandardCharsets.UTF_8);
-//
-//				JSONArray tickerData = new JSONArray(str);
-
-//				if (smartStreamListener != null) {
-//					onTickerArrivalListener.onTicks(tickerData);
-//				}
+			public void onTextMessage(WebSocket websocket, String message) throws Exception {
+				super.onTextMessage(websocket, message);
 			}
 
 			@Override
