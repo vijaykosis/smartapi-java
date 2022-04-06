@@ -38,17 +38,21 @@ public class SmartStreamTickerTest {
 	void testSmartStreamTicketLTP() throws WebSocketException, InterruptedException {
 		SmartStreamTicker ticker = new SmartStreamTicker(clientID, feedToken, new SmartStreamListenerImpl());
 		ticker.connect();
-		ticker.subscribe(SmartStreamSubsMode.LTP, getTokens());
+		ticker.subscribe(SmartStreamSubsMode.QUOTE, getTokens());
 		// uncomment the below line to allow test thread to keep running so that ticks can be received in the listener
-		Thread.currentThread().join();
+		Thread.sleep(30000);
+//		Thread.currentThread().join();
 	}
 	
 	private Set<TokenID> getTokens(){
 		// find out the required token from https://margincalculator.angelbroking.com/OpenAPI_File/files/OpenAPIScripMaster.json
 		Set<TokenID> tokenSet = new HashSet<>();
 //		tokenSet.add(new TokenID(ExchangeType.NSE_CM, "26009")); // NIFTY BANK
-//		tokenSet.add(new TokenID(ExchangeType.NSE_CM, "4717")); // NSE Infosys
-		tokenSet.add(new TokenID(ExchangeType.NSE_CM, "19000"));
+//		tokenSet.add(new TokenID(ExchangeType.NSE_CM, "1594")); // NSE Infosys
+//		tokenSet.add(new TokenID(ExchangeType.NSE_CM, "19000"));
+//		tokenSet.add(new TokenID(ExchangeType.NCX_FO, "GUAREX31MAR2022")); // GUAREX (NCDEX)
+//		tokenSet.add(new TokenID(ExchangeType.NSE_FO, "57919"));
+		tokenSet.add(new TokenID(ExchangeType.BSE_CM, "522034"));
 		return tokenSet;
 	}
 	
@@ -57,6 +61,7 @@ public class SmartStreamTickerTest {
 		TokenID t1 = new TokenID(ExchangeType.NSE_CM, "1594");
 		TokenID t2 = new TokenID(ExchangeType.NSE_CM, "4717");
 		TokenID t3 = new TokenID(ExchangeType.NSE_CM, "1594");
+		TokenID t4 = new TokenID(ExchangeType.NCX_FO, "GUAREX31MAR2022");
 		
 		assertNotEquals(t1, t2);
 		assertEquals(t1, t3);

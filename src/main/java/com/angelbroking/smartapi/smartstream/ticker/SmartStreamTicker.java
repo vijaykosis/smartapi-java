@@ -7,7 +7,6 @@ import java.util.EnumMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.zip.DataFormatException;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -112,15 +111,13 @@ public class SmartStreamTicker {
 						break;
 					}
 					case QUOTE: {
-						ByteBuffer packet = ByteBuffer.allocate(Quote.PACKET_SIZE_IN_BYTES)
-								.order(ByteOrder.LITTLE_ENDIAN);
+						ByteBuffer packet = ByteBuffer.wrap(binary).order(ByteOrder.LITTLE_ENDIAN);
 						Quote quote = ByteUtils.mapToQuote(packet);
 						smartStreamListener.onQuoteArrival(quote);
 						break;
 					}
 					case SNAP_QUOTE: {
-						ByteBuffer packet = ByteBuffer.allocate(SnapQuote.PACKET_SIZE_IN_BYTES)
-								.order(ByteOrder.LITTLE_ENDIAN);
+						ByteBuffer packet = ByteBuffer.wrap(binary).order(ByteOrder.LITTLE_ENDIAN);
 						SnapQuote snapQuote = ByteUtils.mapToSnapQuote(packet);
 						smartStreamListener.onSnapQuoteArrival(snapQuote);
 						break;

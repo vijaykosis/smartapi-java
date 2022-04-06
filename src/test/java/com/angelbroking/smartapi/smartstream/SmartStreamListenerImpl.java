@@ -31,8 +31,24 @@ public class SmartStreamListenerImpl implements SmartStreamListener {
 
 	@Override
 	public void onQuoteArrival(Quote quote) {
-		// TODO Auto-generated method stub
-
+		ZonedDateTime exchangeTime = ZonedDateTime.ofInstant(Instant.ofEpochMilli(quote.getExchangeFeedTimeEpochMillis()), TZ_IST);
+		String data = String.format("token: %s"
+				+ " ltp: %.2f"
+				+ " open: %.2f"
+				+ " high: %.2f"
+				+ " low: %.2f"
+				+ " close: %.2f"
+				+ " exchangeTime: %s"
+				+ " exchangeToClientLatency: %s",
+				quote.getToken().toString(),
+				(quote.getLastTradedPrice() / 100.0),
+				(quote.getOpenPrice() / 100.0),
+				(quote.getHighPrice() / 100.0),
+				(quote.getLowPrice() / 100.0),
+				(quote.getClosePrice() / 100.0),
+				exchangeTime,
+				Instant.now().toEpochMilli() - quote.getExchangeFeedTimeEpochMillis());
+		System.out.println(data);
 	}
 
 	@Override

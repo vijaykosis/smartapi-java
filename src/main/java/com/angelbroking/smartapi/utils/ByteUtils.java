@@ -32,6 +32,15 @@ public class ByteUtils {
 		pojo.setSequenceNumber(packet.getLong(27));
 		pojo.setExchangeFeedTimeEpochMillis(packet.getLong(35));
 		pojo.setLastTradedPrice(packet.getLong(43));
+		pojo.setLastTradedQty(packet.getLong(51));
+		pojo.setAvgTradedPrice(packet.getLong(59));
+		pojo.setVolumeTradedToday(packet.getLong(67));
+		pojo.setTotalBuyQty(packet.getLong(75));
+		pojo.setTotalSellQty(packet.getLong(83));
+		pojo.setOpenPrice(packet.getLong(91));
+		pojo.setHighPrice(packet.getLong(99));
+		pojo.setLowPrice(packet.getLong(107));
+		pojo.setClosePrice(packet.getLong(115));
 		return pojo;
 	}
 	
