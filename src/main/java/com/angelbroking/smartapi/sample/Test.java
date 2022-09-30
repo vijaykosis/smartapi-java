@@ -92,7 +92,7 @@ public class Test {
 
 			/* SmartAPITicker */
 			String clientId = "<clientId>";
-			User user = smartConnect.generateSession("<clientId>", "<password>");
+			User user = smartConnect.generateSession("<clientId>", "<password>", "<totp>");
 			String feedToken = user.getFeedToken();
 			String strWatchListScript = "nse_cm|2885&nse_cm|1594&nse_cm|11536&mcx_fo|221658";
 			String task = "mw";

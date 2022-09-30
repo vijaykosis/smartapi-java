@@ -159,7 +159,7 @@ public class SmartConnect {
 	 * @return User is the user model which contains user and session details.
 	 * 
 	 */
-	public User generateSession(String clientCode, String password) {
+	public User generateSession(String clientCode, String password, String totp) {
 		try {
 			smartAPIRequestHandler = new SmartAPIRequestHandler(proxy);
 
@@ -167,6 +167,7 @@ public class SmartConnect {
 			JSONObject params = new JSONObject();
 			params.put("clientcode", clientCode);
 			params.put("password", password);
+			params.put("totp", totp);
 
 			JSONObject loginResultObject = smartAPIRequestHandler.postRequest(this.apiKey, routes.getLoginUrl(),
 					params);
