@@ -31,7 +31,7 @@ import com.neovisionaries.ws.client.WebSocketFrame;
 
 public class SmartStreamTicker {
 
-	private static final int PING_INTERVAL = 10000; // 30 seconds
+	private static final int PING_INTERVAL = 10000; // 10 seconds
 	private static final String CLIENT_ID_HEADER = "x-client-code";
 	private static final String FEED_TOKEN_HEADER = "x-feed-token";
 	private static final String CLIENT_LIB_HEADER = "x-client-lib";
@@ -300,6 +300,7 @@ public class SmartStreamTicker {
 
 	public void connect() throws WebSocketException {
 		ws.connect();
+		System.out.println("connected to uri: "+ wsuri);
 	}
 
 }

@@ -19,10 +19,12 @@ public class SmartStreamListenerImpl implements SmartStreamListener {
 	public void onLTPArrival(LTP ltp) {
 		ZonedDateTime exchangeTime = ZonedDateTime.ofInstant(Instant.ofEpochMilli(ltp.getExchangeFeedTimeEpochMillis()), TZ_IST);
 		String ltpData = String.format("token: %s"
+				+ " sequenceNumber: %d"
 				+ " ltp: %.2f"
 				+ " exchangeTime: %s"
 				+ " exchangeToClientLatency: %s",
 				ltp.getToken().toString(),
+				ltp.getSequenceNumber(),
 				(ltp.getLastTradedPrice() / 100.0),
 				exchangeTime,
 				Instant.now().toEpochMilli() - ltp.getExchangeFeedTimeEpochMillis());
@@ -33,6 +35,7 @@ public class SmartStreamListenerImpl implements SmartStreamListener {
 	public void onQuoteArrival(Quote quote) {
 		ZonedDateTime exchangeTime = ZonedDateTime.ofInstant(Instant.ofEpochMilli(quote.getExchangeFeedTimeEpochMillis()), TZ_IST);
 		String data = String.format("token: %s"
+				+ " sequenceNumber: %d"
 				+ " ltp: %.2f"
 				+ " open: %.2f"
 				+ " high: %.2f"
@@ -41,6 +44,7 @@ public class SmartStreamListenerImpl implements SmartStreamListener {
 				+ " exchangeTime: %s"
 				+ " exchangeToClientLatency: %s",
 				quote.getToken().toString(),
+				quote.getSequenceNumber(),
 				(quote.getLastTradedPrice() / 100.0),
 				(quote.getOpenPrice() / 100.0),
 				(quote.getHighPrice() / 100.0),
@@ -70,8 +74,7 @@ public class SmartStreamListenerImpl implements SmartStreamListener {
 
 	@Override
 	public void onPong() {
-		// TODO Auto-generated method stub
-
+		System.out.println("pong received");
 	}
 
 }
