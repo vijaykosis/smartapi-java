@@ -51,10 +51,9 @@ public class SmartStreamTickerTest {
 //			ticker.subscribe(SmartStreamSubsMode.SNAP_QUOTE, getTokens());
 			// uncomment the below line to allow test thread to keep running so that ticks
 			// can be received in the listener
-			Thread.sleep(10000);
+//			Thread.sleep(5000);
 			ticker.disconnect();
 			System.out.println("isConnected = "+ticker.isConnectionOpen());
-			Thread.currentThread().join();
 		} catch (Exception e) {
 			e.printStackTrace();
 			throw e;

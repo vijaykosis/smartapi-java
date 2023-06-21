@@ -179,6 +179,7 @@ public class SmartStreamTicker {
                         reconnectAndResubscribe();
                     } else {
                         stopPingTimer();
+                        smartStreamListener.onDisconnected();
                     }
                 } catch (Exception e) {
                 	SmartStreamError error = new SmartStreamError();

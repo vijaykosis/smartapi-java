@@ -11,6 +11,7 @@ public interface SmartStreamListener {
 	void onSnapQuoteArrival(SnapQuote snapQuote);
 	
 	void onConnected();
+	void onDisconnected();
 	void onError(SmartStreamError error);
 	void onPong();
 }

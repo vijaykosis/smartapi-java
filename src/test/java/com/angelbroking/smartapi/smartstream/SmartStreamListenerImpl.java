@@ -96,4 +96,10 @@ public class SmartStreamListenerImpl implements SmartStreamListener {
 		log.info("pong received");
 	}
 
+	@Override
+	public void onDisconnected() {
+		// TODO Auto-generated method stub
+		
+	}
+
 }
