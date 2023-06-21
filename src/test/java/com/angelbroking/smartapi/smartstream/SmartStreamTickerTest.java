@@ -39,6 +39,7 @@ public class SmartStreamTickerTest {
 		SmartConnect smartConnect = new SmartConnect(apiKey);
 		User user = smartConnect.generateSession(clientID, clientPass, totp);
 		feedToken = user.getFeedToken();
+//		feedToken = "123";
 	}
 	
 	@Test
@@ -47,10 +48,13 @@ public class SmartStreamTickerTest {
 			SmartStreamTicker ticker = new SmartStreamTicker(clientID, feedToken, new SmartStreamListenerImpl());
 			ticker.connect();
 			ticker.subscribe(SmartStreamSubsMode.QUOTE, getTokens());
+//			ticker.subscribe(SmartStreamSubsMode.SNAP_QUOTE, getTokens());
 			// uncomment the below line to allow test thread to keep running so that ticks
 			// can be received in the listener
-			Thread.sleep(30000);
-//			Thread.currentThread().join();
+			Thread.sleep(10000);
+			ticker.disconnect();
+			System.out.println("isConnected = "+ticker.isConnectionOpen());
+			Thread.currentThread().join();
 		} catch (Exception e) {
 			e.printStackTrace();
 			throw e;
@@ -61,12 +65,20 @@ public class SmartStreamTickerTest {
 	private Set<TokenID> getTokens(){
 		// find out the required token from https://margincalculator.angelbroking.com/OpenAPI_File/files/OpenAPIScripMaster.json
 		Set<TokenID> tokenSet = new HashSet<>();
-//		tokenSet.add(new TokenID(ExchangeType.NSE_CM, "26009")); // NIFTY BANK
+		tokenSet.add(new TokenID(ExchangeType.NSE_CM, "26000")); // NIFTY
+		tokenSet.add(new TokenID(ExchangeType.NSE_CM, "26009")); // NIFTY BANK
+		tokenSet.add(new TokenID(ExchangeType.BSE_CM, "19000")); // Sensex
+		
+		tokenSet.add(new TokenID(ExchangeType.NSE_CM, "99926000")); // NIFTY
+		tokenSet.add(new TokenID(ExchangeType.NSE_CM, "99926009")); // NIFTY BANK
+		tokenSet.add(new TokenID(ExchangeType.BSE_CM, "99919000")); // Sensex
+		
 		tokenSet.add(new TokenID(ExchangeType.NSE_CM, "1594")); // NSE Infosys
-//		tokenSet.add(new TokenID(ExchangeType.NSE_CM, "19000"));
+		tokenSet.add(new TokenID(ExchangeType.NSE_FO, "35003")); // Nifty June 2023 FUT
+		tokenSet.add(new TokenID(ExchangeType.CDE_FO, "1185")); // 1185 USDINR 
+		tokenSet.add(new TokenID(ExchangeType.BSE_CM, "532540")); // BSE TCS
 		tokenSet.add(new TokenID(ExchangeType.NCX_FO, "GUARGUM5")); // GUAREX (NCDEX)
-//		tokenSet.add(new TokenID(ExchangeType.NSE_FO, "57919"));
-		tokenSet.add(new TokenID(ExchangeType.MCX_FO, "239484"));
+		tokenSet.add(new TokenID(ExchangeType.MCX_FO, "252453")); //CRUDEOIL
 		return tokenSet;
 	}
 	

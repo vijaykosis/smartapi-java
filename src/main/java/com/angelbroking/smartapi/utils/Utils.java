@@ -48,5 +48,13 @@ public class Utils {
 		}
 		return false;
 	}
+	
+	public static <T> boolean validateInputNullCheck(T input) {
+        return input == null;
+    }
+
+    public static <T> boolean validateInputNotNullCheck(T input) {
+        return input != null;
+    }
 
 }

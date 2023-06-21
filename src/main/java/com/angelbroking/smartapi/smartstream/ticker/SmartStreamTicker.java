@@ -3,10 +3,13 @@ package com.angelbroking.smartapi.smartstream.ticker;
 import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
+import java.time.LocalDateTime;
 import java.util.EnumMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.Timer;
+import java.util.TimerTask;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -29,6 +32,9 @@ import com.neovisionaries.ws.client.WebSocketException;
 import com.neovisionaries.ws.client.WebSocketFactory;
 import com.neovisionaries.ws.client.WebSocketFrame;
 
+import lombok.extern.slf4j.Slf4j;
+
+@Slf4j
 public class SmartStreamTicker {
 
 	private static final int PING_INTERVAL = 10000; // 10 seconds
@@ -36,38 +42,48 @@ public class SmartStreamTicker {
 	private static final String FEED_TOKEN_HEADER = "x-feed-token";
 	private static final String CLIENT_LIB_HEADER = "x-client-lib";
 
-	private Routes routes = new Routes();
+	private final Routes routes = new Routes();
 	private final String wsuri = routes.getSmartStreamWSURI();
-	private SmartStreamListener smartStreamListener;
+	private final SmartStreamListener smartStreamListener;
 	private WebSocket ws;
-	private String clientId;
-	private String feedToken;
+	private final String clientId;
+	private final String feedToken;
 	private EnumMap<SmartStreamSubsMode, Set<TokenID>> tokensByModeMap = new EnumMap<>(SmartStreamSubsMode.class);
+	private Timer pingTimer;
+	private LocalDateTime lastPongReceivedTime = LocalDateTime.now();
 
 	/**
-	 * Initialize SmartStreamTicker.
-	 */
-	public SmartStreamTicker(String clientId, String feedToken, SmartStreamListener smartStreamListener) {
-		if (Utils.isEmpty(clientId) || Utils.isEmpty(feedToken) || smartStreamListener == null) {
-			throw new IllegalArgumentException(
-					"clientId, feedToken and smartStreamListener should not be empty or null");
-		}
+     * Initializes the SmartStreamTicker.
+     *
+     * @param clientId            - the client ID used for authentication
+     * @param feedToken           - the feed token used for authentication
+     * @param smartStreamListener - the SmartStreamListener for receiving callbacks
+     * @throws IllegalArgumentException - if the clientId, feedToken, or SmartStreamListener is null or empty
+     */
+    public SmartStreamTicker(String clientId, String feedToken, SmartStreamListener smartStreamListener) {
+        if (Utils.isEmpty(clientId) || Utils.isEmpty(feedToken) ||  Utils.validateInputNullCheck(smartStreamListener)) {
+            throw new IllegalArgumentException(
+                    "clientId, feedToken and SmartStreamListener should not be empty or null");
+        }
 
-		this.clientId = clientId;
-		this.feedToken = feedToken;
-		this.smartStreamListener = smartStreamListener;
-		init();
-	}
+        this.clientId = clientId;
+        this.feedToken = feedToken;
+        this.smartStreamListener = smartStreamListener;
+        init();
+    }
 
 	private void init() {
 		try {
-			ws = new WebSocketFactory().setVerifyHostname(false).createSocket(wsuri).setPingInterval(PING_INTERVAL);
-			ws.addHeader(CLIENT_ID_HEADER, clientId); // mandatory header
-			ws.addHeader(FEED_TOKEN_HEADER, feedToken); // mandatory header
-			ws.addHeader(CLIENT_LIB_HEADER, "JAVA"); // optional header on the server
+			ws = new WebSocketFactory()
+					.setVerifyHostname(false)
+					.createSocket(wsuri)
+					.setPingInterval(PING_INTERVAL);
+			ws.addHeader(CLIENT_ID_HEADER, clientId); 
+			ws.addHeader(FEED_TOKEN_HEADER, feedToken);
+			ws.addHeader(CLIENT_LIB_HEADER, "JAVA");
 			ws.addListener(getWebsocketAdapter());
 		} catch (IOException e) {
-			if (smartStreamListener != null) {
+			if (Utils.validateInputNotNullCheck(smartStreamListener)) {
 				smartStreamListener.onError(getErrorHolder(e));
 			}
 		}
@@ -82,10 +98,10 @@ public class SmartStreamTicker {
 	/** Returns a WebSocketAdapter to listen to ticker related events. */
 	public WebSocketAdapter getWebsocketAdapter() {
 		return new WebSocketAdapter() {
-
 			@Override
 			public void onConnected(WebSocket websocket, Map<String, List<String>> headers) throws WebSocketException {
 				smartStreamListener.onConnected();
+                startPingTimer(websocket);
 			}
 
 			@Override
@@ -95,39 +111,40 @@ public class SmartStreamTicker {
 
 			@Override
 			public void onBinaryMessage(WebSocket websocket, byte[] binary) {
+				SmartStreamSubsMode mode = SmartStreamSubsMode.findByVal(binary[0]);
+				if (Utils.validateInputNullCheck(mode)) {
+					StringBuilder sb = new StringBuilder();
+					sb.append("Invalid SubsMode=");
+					sb.append(binary[0]);
+					sb.append(" in the response binary packet");
+					smartStreamListener.onError(getErrorHolder(new SmartAPIException(sb.toString())));
+				}
 				try {
-					SmartStreamSubsMode mode = SmartStreamSubsMode.findByVal(binary[0]);
-					if (mode == null) {
-						smartStreamListener.onError(getErrorHolder(new SmartAPIException(
-								"Invalid SubsMode=" + binary[0] + " in the response binary packet")));
-						return;
-					}
-
 					switch (mode) {
-					case LTP: {
-						ByteBuffer packet = ByteBuffer.wrap(binary).order(ByteOrder.LITTLE_ENDIAN);
-						LTP ltp = ByteUtils.mapToLTP(packet);
-						smartStreamListener.onLTPArrival(ltp);
-						break;
+						case LTP: {
+							ByteBuffer packet = ByteBuffer.wrap(binary).order(ByteOrder.LITTLE_ENDIAN);
+							LTP ltp = ByteUtils.mapToLTP(packet);
+							smartStreamListener.onLTPArrival(ltp);
+							break;
+						}
+						case QUOTE: {
+							ByteBuffer packet = ByteBuffer.wrap(binary).order(ByteOrder.LITTLE_ENDIAN);
+							Quote quote = ByteUtils.mapToQuote(packet);
+							smartStreamListener.onQuoteArrival(quote);
+							break;
+						}
+						case SNAP_QUOTE: {
+							ByteBuffer packet = ByteBuffer.wrap(binary).order(ByteOrder.LITTLE_ENDIAN);
+							SnapQuote snapQuote = ByteUtils.mapToSnapQuote(packet);
+							smartStreamListener.onSnapQuoteArrival(snapQuote);
+							break;
+						}
+						default: {
+							smartStreamListener.onError(getErrorHolder(
+									new SmartAPIException("SubsMode=" + mode + " in the response is not handled.")));
+							break;
+						}
 					}
-					case QUOTE: {
-						ByteBuffer packet = ByteBuffer.wrap(binary).order(ByteOrder.LITTLE_ENDIAN);
-						Quote quote = ByteUtils.mapToQuote(packet);
-						smartStreamListener.onQuoteArrival(quote);
-						break;
-					}
-					case SNAP_QUOTE: {
-						ByteBuffer packet = ByteBuffer.wrap(binary).order(ByteOrder.LITTLE_ENDIAN);
-						SnapQuote snapQuote = ByteUtils.mapToSnapQuote(packet);
-						smartStreamListener.onSnapQuoteArrival(snapQuote);
-						break;
-					}
-					default:
-						smartStreamListener.onError(getErrorHolder(
-								new SmartAPIException("SubsMode=" + mode + " in the response is not handled.")));
-						break;
-					}
-					super.onBinaryMessage(websocket, binary);
 				} catch (Exception e) {
 					smartStreamListener.onError(getErrorHolder(e));
 				}
@@ -136,12 +153,13 @@ public class SmartStreamTicker {
 			@Override
 			public void onPongFrame(WebSocket websocket, WebSocketFrame frame) throws Exception {
 				try {
-					smartStreamListener.onPong();
-				} catch (Exception e) {
-					SmartStreamError error = new SmartStreamError();
-					error.setException(e);
-					smartStreamListener.onError(error);
-				}
+                    lastPongReceivedTime = LocalDateTime.now();
+                    smartStreamListener.onPong();
+                } catch (Exception e) {
+                    SmartStreamError error = new SmartStreamError();
+                    error.setException(e);
+                    smartStreamListener.onError(error);
+                }
 			}
 
 			/**
@@ -156,18 +174,17 @@ public class SmartStreamTicker {
 			@Override
 			public void onDisconnected(WebSocket websocket, WebSocketFrame serverCloseFrame,
 					WebSocketFrame clientCloseFrame, boolean closedByServer) {
-
 				try {
-					if (closedByServer) {
-						if (serverCloseFrame.getCloseCode() == 1001) {
-
-						}
-						reconnectAndResubscribe();
-					}
-
-				} catch (Exception e) {
-					e.printStackTrace();
-				}
+                    if (closedByServer) {
+                        reconnectAndResubscribe();
+                    } else {
+                        stopPingTimer();
+                    }
+                } catch (Exception e) {
+                	SmartStreamError error = new SmartStreamError();
+                    error.setException(e);
+                    smartStreamListener.onError(error);
+                }
 			}
 			
 			@Override
@@ -176,17 +193,49 @@ public class SmartStreamTicker {
 			}
 		};
 	}
+	
+	private void startPingTimer(final WebSocket websocket) {
+
+        pingTimer = new Timer();
+        pingTimer.scheduleAtFixedRate(new TimerTask() {
+            @Override
+            public void run() {
+                try {
+                    LocalDateTime currentTime = LocalDateTime.now();
+                    if (lastPongReceivedTime.isBefore(currentTime.minusSeconds(20))) {
+                        websocket.disconnect();
+                        reconnectAndResubscribe();
+                    }
+                } catch (Exception e) {
+                    smartStreamListener.onError(getErrorHolder(e));
+                }
+            }
+        }, 5000, 5000); // run at every 5 second
+    }
+
+    private void stopPingTimer() {
+        if (Utils.validateInputNotNullCheck(pingTimer)) {
+            pingTimer.cancel();
+            pingTimer = null;
+        }
+    }
 
 	private void reconnectAndResubscribe() throws WebSocketException {
+		log.info("reconnectAndResubscribe - started");
 		init();
 		connect();
-		resubscribe();
+		// resubscribing the existing tokens as per the mode
+		tokensByModeMap.forEach((mode,tokens) -> {
+			subscribe(mode, tokens);
+		});
+		log.info("reconnectAndResubscribe - done");
 	}
 
 	/** Disconnects websocket connection. */
 	public void disconnect() {
 
-		if (ws != null && ws.isOpen()) {
+		if (ws != null) {
+			stopPingTimer();
 			ws.disconnect();
 		}
 	}
@@ -215,6 +264,7 @@ public class SmartStreamTicker {
 	public void subscribe(SmartStreamSubsMode mode, Set<TokenID> tokens) {
 		if (ws != null) {
 			if (ws.isOpen()) {
+				tokensByModeMap.put(mode, tokens);
 				JSONObject wsMWJSONRequest = getApiRequest(SmartStreamAction.SUBS, mode, tokens);
 				ws.sendText(wsMWJSONRequest.toString());
 			} else {
@@ -231,7 +281,12 @@ public class SmartStreamTicker {
 	public void unsubscribe(SmartStreamSubsMode mode, Set<TokenID> tokens) {
 		if (ws != null) {
 			if (ws.isOpen()) {
-				getApiRequest(SmartStreamAction.UNSUBS, mode, tokens);
+				JSONObject wsMWJSONRequest = getApiRequest(SmartStreamAction.UNSUBS, mode, tokens);
+				ws.sendText(wsMWJSONRequest.toString());
+				Set<TokenID> currentlySubscribedTokens = tokensByModeMap.get(mode);
+				if(currentlySubscribedTokens != null) {
+					currentlySubscribedTokens.removeAll(tokens);
+				}
 			} else {
 				smartStreamListener.onError(getErrorHolder(new SmartAPIException("ticker is not connected", "504")));
 			}
@@ -264,28 +319,6 @@ public class SmartStreamTicker {
 		return exchangeTokenList;
 	}
 
-	/**
-	 * resubscribe existing tokens.
-	 */
-	public void resubscribe() {
-		if (ws != null) {
-			if (ws.isOpen()) {
-
-				JSONObject wsMWJSONRequest = new JSONObject();
-				wsMWJSONRequest.put("token", this.feedToken);
-				wsMWJSONRequest.put("user", this.clientId);
-				wsMWJSONRequest.put("acctid", this.clientId);
-
-				ws.sendText(wsMWJSONRequest.toString());
-
-			} else {
-				smartStreamListener.onError(getErrorHolder(new SmartAPIException("ticker is not connected", "504")));
-			}
-		} else {
-			smartStreamListener.onError(getErrorHolder(new SmartAPIException("ticker is null not connected", "504")));
-		}
-	}
-
 	private JSONObject getApiRequest(SmartStreamAction action, SmartStreamSubsMode mode, Set<TokenID> tokens) {
 		JSONObject params = new JSONObject();
 		params.put("mode", mode.getVal());
@@ -300,7 +333,7 @@ public class SmartStreamTicker {
 
 	public void connect() throws WebSocketException {
 		ws.connect();
-		System.out.println("connected to uri: "+ wsuri);
+		log.info("connected to uri: {}", wsuri);
 	}
 
 }
