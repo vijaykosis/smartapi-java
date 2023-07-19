@@ -1,14 +1,5 @@
 package com.angelbroking.smartapi;
 
-import java.io.IOException;
-import java.net.Proxy;
-import java.util.List;
-
-import org.apache.commons.codec.digest.DigestUtils;
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
-
 import com.angelbroking.smartapi.http.SessionExpiryHook;
 import com.angelbroking.smartapi.http.SmartAPIRequestHandler;
 import com.angelbroking.smartapi.http.exceptions.SmartAPIException;
@@ -18,6 +9,14 @@ import com.angelbroking.smartapi.models.Order;
 import com.angelbroking.smartapi.models.OrderParams;
 import com.angelbroking.smartapi.models.TokenSet;
 import com.angelbroking.smartapi.models.User;
+import org.apache.commons.codec.digest.DigestUtils;
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.io.IOException;
+import java.net.Proxy;
+import java.util.List;
 
 public class SmartConnect {
 	public static SessionExpiryHook sessionExpiryHook = null;
@@ -704,6 +703,17 @@ public class SmartConnect {
 		}
 	}
 
+	public JSONObject marketData(JSONObject params) {
+		try{
+			String url = routes.get("api.market.data");
+			JSONObject response = smartAPIRequestHandler.postRequest(this.apiKey, url, params, accessToken);
+			return response.getJSONObject("data");
+		}catch (Exception | SmartAPIException e) {
+			System.out.println(e.getMessage());
+			return null;
+		}
+	}
+
 	/**
 	 * Logs out user by invalidating the access token.
 	 * 
@@ -723,5 +733,6 @@ public class SmartConnect {
 			return null;
 		}
 	}
+
 
 }
