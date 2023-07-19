@@ -39,7 +39,7 @@ public class Test {
 			/* System.out.println("getProfile"); */
 			examples.getProfile(smartConnect);
 
-			System.out.println("placeOrder");
+			/* System.out.println("placeOrder"); */
 			examples.placeOrder(smartConnect);
 
 			/* System.out.println("modifyOrder"); */
@@ -87,7 +87,7 @@ public class Test {
 			/* System.out.println("Historic candle Data"); */
 			examples.getCandleData(smartConnect);
 
-			/* System.out.println("Historic candle Data"); */
+			/* System.out.println("Market Data"); */
 			examples.getMarketData(smartConnect);
 
 			/* System.out.println("logout"); */

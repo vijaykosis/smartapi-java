@@ -28,7 +28,6 @@ public class Examples {
 
     public void getProfile(SmartConnect smartConnect) throws IOException, SmartAPIException {
         User profile = smartConnect.getProfile();
-        System.out.println(profile);
     }
 
     /** CONSTANT Details */
@@ -80,9 +79,7 @@ public class Examples {
      * EXCHANGE_MCX: MCX Commodity
      */
 
-    /**
-     * Place order.
-     */
+    /** Place order. */
     public void placeOrder(SmartConnect smartConnect) throws SmartAPIException, IOException {
 
         OrderParams orderParams = new OrderParams();
@@ -102,9 +99,7 @@ public class Examples {
         System.out.print(order);
     }
 
-    /**
-     * Modify order.
-     */
+    /** Modify order. */
     public void modifyOrder(SmartConnect smartConnect) throws SmartAPIException, IOException {
         // Order modify request will return order model which will contain only
 
@@ -122,9 +117,7 @@ public class Examples {
         Order order = smartConnect.modifyOrder(orderId, orderParams, Constants.VARIETY_NORMAL);
     }
 
-    /**
-     * Cancel an order
-     */
+    /** Cancel an order */
     public void cancelOrder(SmartConnect smartConnect) throws SmartAPIException, IOException {
         // Order modify request will return order model which will contain only
         // order_id.
@@ -132,9 +125,7 @@ public class Examples {
         Order order = smartConnect.cancelOrder("201009000000015", Constants.VARIETY_NORMAL);
     }
 
-    /**
-     * Get order details
-     */
+    /** Get order details */
     public void getOrder(SmartConnect smartConnect) throws SmartAPIException, IOException {
         JSONObject orders = smartConnect.getOrderHistory(smartConnect.getUserId());
         System.out.print(orders);
@@ -155,42 +146,32 @@ public class Examples {
         JSONObject ltpData = smartConnect.getLTP(exchange, tradingSymbol, symboltoken);
     }
 
-    /**
-     * Get tradebook
-     */
+    /** Get tradebook */
     public void getTrades(SmartConnect smartConnect) throws SmartAPIException, IOException {
         // Returns tradebook.
         JSONObject trades = smartConnect.getTrades();
 
     }
 
-    /**
-     * Get RMS
-     */
+    /** Get RMS */
     public void getRMS(SmartConnect smartConnect) throws SmartAPIException, IOException {
         // Returns RMS.
         JSONObject response = smartConnect.getRMS();
     }
 
-    /**
-     * Get Holdings
-     */
+    /** Get Holdings */
     public void getHolding(SmartConnect smartConnect) throws SmartAPIException, IOException {
         // Returns Holding.
         JSONObject response = smartConnect.getHolding();
     }
 
-    /**
-     * Get Position
-     */
+    /** Get Position */
     public void getPosition(SmartConnect smartConnect) throws SmartAPIException, IOException {
         // Returns Position.
         JSONObject response = smartConnect.getPosition();
     }
 
-    /**
-     * convert Position
-     */
+    /** convert Position */
     public void convertPosition(SmartConnect smartConnect) throws SmartAPIException, IOException {
 
         JSONObject requestObejct = new JSONObject();
@@ -205,9 +186,7 @@ public class Examples {
         JSONObject response = smartConnect.convertPosition(requestObejct);
     }
 
-    /**
-     * Create Gtt Rule
-     */
+    /** Create Gtt Rule */
     public void createRule(SmartConnect smartConnect) throws SmartAPIException, IOException {
         GttParams gttParams = new GttParams();
 
@@ -225,9 +204,7 @@ public class Examples {
         Gtt gtt = smartConnect.gttCreateRule(gttParams);
     }
 
-    /**
-     * Modify Gtt Rule
-     */
+    /** Modify Gtt Rule */
     public void modifyRule(SmartConnect smartConnect) throws SmartAPIException, IOException {
         GttParams gttParams = new GttParams();
 
@@ -247,9 +224,7 @@ public class Examples {
         Gtt gtt = smartConnect.gttModifyRule(id, gttParams);
     }
 
-    /**
-     * Cancel Gtt Rule
-     */
+    /** Cancel Gtt Rule */
     public void cancelRule(SmartConnect smartConnect) throws SmartAPIException, IOException {
         Integer id = 1000051;
         String symboltoken = "3045";
@@ -258,18 +233,14 @@ public class Examples {
         Gtt gtt = smartConnect.gttCancelRule(id, symboltoken, exchange);
     }
 
-    /**
-     * Gtt Rule Details
-     */
+    /** Gtt Rule Details */
     public void ruleDetails(SmartConnect smartConnect) throws SmartAPIException, IOException {
         Integer id = 1000051;
 
         JSONObject gtt = smartConnect.gttRuleDetails(id);
     }
 
-    /**
-     * Gtt Rule Lists
-     */
+    /** Gtt Rule Lists */
     @SuppressWarnings("serial")
     public void ruleList(SmartConnect smartConnect) throws SmartAPIException, IOException {
 
@@ -288,9 +259,7 @@ public class Examples {
         JSONArray gtt = smartConnect.gttRuleList(status, page, count);
     }
 
-    /**
-     * Historic Data
-     */
+    /** Historic Data */
     public void getCandleData(SmartConnect smartConnect) throws SmartAPIException, IOException {
 
         JSONObject requestObejct = new JSONObject();
@@ -303,6 +272,7 @@ public class Examples {
         String response = smartConnect.candleData(requestObejct);
     }
 
+    /** Market Data */
     public void getMarketData(SmartConnect smartConnect) {
         // Create the payload object
         JSONObject payload = new JSONObject();
@@ -315,7 +285,9 @@ public class Examples {
         JSONObject response = smartConnect.marketData(payload);
     }
 
-    public void tickerUsage(String clientId, String feedToken, String strWatchListScript, String task) throws SmartAPIException {
+
+    public void tickerUsage(String clientId, String feedToken, String strWatchListScript, String task)
+            throws SmartAPIException {
 
         SmartAPITicker tickerProvider = new SmartAPITicker(clientId, feedToken, strWatchListScript, task);
 
@@ -351,12 +323,16 @@ public class Examples {
 
     }
 
-    public void smartWebSocketUsage(String clientId, String jwtToken, String apiKey, String actionType, String feedType) throws SmartAPIException {
+    public void smartWebSocketUsage(String clientId, String jwtToken, String apiKey, String actionType, String feedType)
+            throws SmartAPIException {
 
         SmartWebsocket smartWebsocket = new SmartWebsocket(clientId, jwtToken, apiKey, actionType, feedType);
+
         smartWebsocket.setOnConnectedListener(new SmartWSOnConnect() {
+
             @Override
             public void onConnected() {
+
                 smartWebsocket.runscript();
             }
         });
@@ -410,13 +386,10 @@ public class Examples {
 
     }
 
-    /**
-     * Logout user.
-     */
+    /** Logout user. */
     public void logout(SmartConnect smartConnect) throws SmartAPIException, IOException {
         /** Logout user and kill session. */
         JSONObject jsonObject = smartConnect.logout();
     }
-
 
 }
