@@ -1,12 +1,5 @@
 package com.angelbroking.smartapi.sample;
 
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
-
-import org.json.JSONArray;
-import org.json.JSONObject;
-
 import com.angelbroking.smartapi.SmartConnect;
 import com.angelbroking.smartapi.http.exceptions.SmartAPIException;
 import com.angelbroking.smartapi.models.Gtt;
@@ -23,6 +16,12 @@ import com.angelbroking.smartapi.ticker.OnConnect;
 import com.angelbroking.smartapi.ticker.OnTicks;
 import com.angelbroking.smartapi.ticker.SmartAPITicker;
 import com.angelbroking.smartapi.utils.Constants;
+import org.json.JSONArray;
+import org.json.JSONObject;
+
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 
 @SuppressWarnings("unused")
 public class Examples {
@@ -272,6 +271,15 @@ public class Examples {
 
 		String response = smartConnect.candleData(requestObejct);
 	}
+
+	/** Search Scrip Data */
+	public void getSearchScrip(SmartConnect smartConnect) throws SmartAPIException{
+		JSONObject payload = new JSONObject();
+		payload.put("exchange", "MCX");
+		payload.put("searchscrip", "Crude");
+		String response = smartConnect.getSearchScrip(payload);
+	}
+
 
 	public void tickerUsage(String clientId, String feedToken, String strWatchListScript, String task)
 			throws SmartAPIException {
