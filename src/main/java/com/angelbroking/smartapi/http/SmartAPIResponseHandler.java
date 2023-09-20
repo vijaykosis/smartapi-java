@@ -1,11 +1,9 @@
 package com.angelbroking.smartapi.http;
 
 import java.io.IOException;
-import java.util.List;
 
 import com.angelbroking.smartapi.http.exceptions.ApiKeyException;
 import com.angelbroking.smartapi.models.SearchScripResponseDTO;
-import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
 import org.json.JSONArray;
