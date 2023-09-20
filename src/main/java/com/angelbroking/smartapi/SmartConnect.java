@@ -9,6 +9,7 @@ import com.angelbroking.smartapi.models.Order;
 import com.angelbroking.smartapi.models.OrderParams;
 import com.angelbroking.smartapi.models.TokenSet;
 import com.angelbroking.smartapi.models.User;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.codec.digest.DigestUtils;
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -18,6 +19,14 @@ import java.io.IOException;
 import java.net.Proxy;
 import java.util.List;
 
+import static com.angelbroking.smartapi.utils.Constants.IO_EXCEPTION_ERROR_MSG;
+import static com.angelbroking.smartapi.utils.Constants.IO_EXCEPTION_OCCURRED;
+import static com.angelbroking.smartapi.utils.Constants.JSON_EXCEPTION_ERROR_MSG;
+import static com.angelbroking.smartapi.utils.Constants.JSON_EXCEPTION_OCCURRED;
+import static com.angelbroking.smartapi.utils.Constants.SMART_API_EXCEPTION_ERROR_MSG;
+import static com.angelbroking.smartapi.utils.Constants.SMART_API_EXCEPTION_OCCURRED;
+
+@Slf4j
 public class SmartConnect {
 	public static SessionExpiryHook sessionExpiryHook = null;
 	public static boolean ENABLE_LOGGING = false;
@@ -709,14 +718,20 @@ public class SmartConnect {
 	 * @param params is market data params.
 	 * @return returns the details of market data.
 	 */
-	public JSONObject marketData(JSONObject params) {
+	public JSONObject marketData(JSONObject params) throws SmartAPIException, IOException {
 		try{
 			String url = routes.get("api.market.data");
 			JSONObject response = smartAPIRequestHandler.postRequest(this.apiKey, url, params, accessToken);
 			return response.getJSONObject("data");
-		}catch (Exception | SmartAPIException e) {
-			System.out.println(e.getMessage());
-			return null;
+		}catch (SmartAPIException ex) {
+			log.error("{} while placing order {}", SMART_API_EXCEPTION_OCCURRED, ex.toString());
+			throw new SmartAPIException(String.format("%s in placing order %s", SMART_API_EXCEPTION_ERROR_MSG, ex));
+		} catch (IOException ex) {
+			log.error("{} while placing order {}", IO_EXCEPTION_OCCURRED, ex.getMessage());
+			throw new IOException(String.format("%s in placing order %s", IO_EXCEPTION_ERROR_MSG, ex.getMessage()));
+		} catch (JSONException ex) {
+			log.error("{} while placing order {}", JSON_EXCEPTION_OCCURRED, ex.getMessage());
+			throw new JSONException(String.format("%s in placing order %s", JSON_EXCEPTION_ERROR_MSG, ex.getMessage()));
 		}
 	}
 

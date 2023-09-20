@@ -272,11 +272,17 @@ public class Examples {
 		String response = smartConnect.candleData(requestObejct);
 	}
 
-    /** Market Data */
-    public void getMarketData(SmartConnect smartConnect) {
-        // Create the payload object
+	/**
+	 * Market Data
+	 * To Retrieve Market Data with different modes use.
+	 *  e.g:
+	 *      payload.put("mode", "FULL");
+	 *      payload.put("mode", "LTP");
+	 *      payload.put("mode", "OHLC");
+	 */
+    public void getMarketData(SmartConnect smartConnect) throws SmartAPIException, IOException {
         JSONObject payload = new JSONObject();
-        payload.put("mode", "FULL");
+        payload.put("mode", "FULL"); // You can change the mode as needed
         JSONObject exchangeTokens = new JSONObject();
         JSONArray nseTokens = new JSONArray();
         nseTokens.put("3045");

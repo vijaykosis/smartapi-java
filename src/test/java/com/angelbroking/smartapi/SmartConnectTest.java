@@ -1,9 +1,11 @@
 package com.angelbroking.smartapi;
 
 import com.angelbroking.smartapi.http.SmartAPIRequestHandler;
+import com.angelbroking.smartapi.http.exceptions.DataException;
 import com.angelbroking.smartapi.http.exceptions.SmartAPIException;
 import lombok.extern.slf4j.Slf4j;
 import org.json.JSONArray;
+import org.json.JSONException;
 import org.json.JSONObject;
 import org.junit.Before;
 import org.junit.Test;
@@ -13,6 +15,13 @@ import org.mockito.junit.MockitoJUnitRunner;
 
 import java.io.IOException;
 
+import static com.angelbroking.smartapi.utils.Constants.IO_EXCEPTION_ERROR_MSG;
+import static com.angelbroking.smartapi.utils.Constants.IO_EXCEPTION_OCCURRED;
+import static com.angelbroking.smartapi.utils.Constants.JSON_EXCEPTION_ERROR_MSG;
+import static com.angelbroking.smartapi.utils.Constants.JSON_EXCEPTION_OCCURRED;
+import static com.angelbroking.smartapi.utils.Constants.SMART_API_EXCEPTION_ERROR_MSG;
+import static com.angelbroking.smartapi.utils.Constants.SMART_API_EXCEPTION_OCCURRED;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.when;
 
@@ -32,60 +41,8 @@ public class SmartConnectTest {
     private String apiKey;
     private String accessToken;
 
-
-    @Before
-    public void setup() {
-         apiKey = System.getProperty("apiKey");
-         accessToken = System.getenv("accessToken");
-    }
-
-
-    @Test
-    public void testMarketData_Success() throws SmartAPIException, IOException {
-        String url = routes.get("api.market.data");
-        JSONObject params = getMarketDataRequest();
-        when(smartAPIRequestHandler.postRequest(eq(this.apiKey), eq(url), eq(params), eq(this.accessToken))).thenReturn(createMarketDataResponse());
-        try{
-            JSONObject response = smartAPIRequestHandler.postRequest(this.apiKey, url, params, this.accessToken);
-             response.getJSONObject("data");
-        }catch (Exception | SmartAPIException e) {
-            e.printStackTrace();
-            System.out.println(e.getMessage());
-        }
-    }
-
-
-
-
-    @Test
-    public void testMarketData_Failure() throws SmartAPIException, IOException {
-        // Stub the postRequest method
-        String url = routes.get("api.market.data");
-        JSONObject params = getMarketDataRequest();
-        when(smartAPIRequestHandler.postRequest(eq(this.apiKey), eq(url), eq(params), eq(this.accessToken)))
-                .thenThrow(new SmartAPIException("API request failed"));
-        try {
-            JSONObject response = smartAPIRequestHandler.postRequest(apiKey, url, params, accessToken);
-            // Perform assertions or further actions with the response
-            response.getJSONObject("data");
-        } catch (Exception | SmartAPIException e) {
-            System.out.println(e.getMessage());
-        }
-        // If the exception is not thrown, the following assertion will fail
-    }
-
-    private JSONObject getMarketDataRequest() {
-        JSONObject payload = new JSONObject();
-        payload.put("mode", "FULL");
-        JSONObject exchangeTokens = new JSONObject();
-        JSONArray nseTokens = new JSONArray();
-        nseTokens.put("3045");
-        exchangeTokens.put("NSE", nseTokens);
-        payload.put("exchangeTokens", exchangeTokens);
-        return payload;
-    }
-
-    private static JSONObject createMarketDataResponse() {  JSONObject jsonObject = new JSONObject();
+    private static JSONObject createMarketDataResponse() {
+        JSONObject jsonObject = new JSONObject();
 
         // Create "data" object
         JSONObject dataObject = new JSONObject();
@@ -170,7 +127,159 @@ public class SmartConnectTest {
         jsonObject.put("errorcode", "");
         jsonObject.put("status", true);
 
-        return jsonObject;}
+        return jsonObject;
+    }
 
+    @Before
+    public void setup() {
+        apiKey = System.getProperty("apiKey");
+        accessToken = System.getenv("accessToken");
+    }
+
+    // Testing market data success for Full payload
+    @Test
+    public void testMarketData_Success() throws SmartAPIException, IOException {
+        String url = routes.get("api.market.data");
+        JSONObject params = getMarketDataRequest("FULL");
+        when(smartAPIRequestHandler.postRequest(eq(this.apiKey), eq(url), eq(params), eq(this.accessToken))).thenReturn(createMarketDataResponse());
+        try {
+            JSONObject response = smartAPIRequestHandler.postRequest(this.apiKey, url, params, this.accessToken);
+            JSONObject data = response.getJSONObject("data");
+            assertNotNull(data);
+        } catch (SmartAPIException ex) {
+            log.error("{} while placing order {}", SMART_API_EXCEPTION_OCCURRED, ex.toString());
+            throw new SmartAPIException(String.format("%s in placing order %s", SMART_API_EXCEPTION_ERROR_MSG, ex));
+        } catch (IOException ex) {
+            log.error("{} while placing order {}", IO_EXCEPTION_OCCURRED, ex.getMessage());
+            throw new IOException(String.format("%s in placing order %s", IO_EXCEPTION_ERROR_MSG, ex.getMessage()));
+        } catch (JSONException ex) {
+            log.error("{} while placing order {}", JSON_EXCEPTION_OCCURRED, ex.getMessage());
+            throw new JSONException(String.format("%s in placing order %s", JSON_EXCEPTION_ERROR_MSG, ex.getMessage()));
+        }
+    }
+
+    // Testing market data failure for Full payload
+    @Test(expected = SmartAPIException.class)
+    public void testMarketData_Failure() throws SmartAPIException, IOException {
+        // Stub the postRequest method
+        String url = routes.get("api.market.data");
+        JSONObject params = getMarketDataRequest("FULL");
+        when(smartAPIRequestHandler.postRequest(eq(this.apiKey), eq(url), eq(params), eq(this.accessToken)))
+                .thenThrow(new SmartAPIException("API request failed"));
+        try {
+            JSONObject response = smartAPIRequestHandler.postRequest(apiKey, url, params, accessToken);
+            response.getJSONObject("data");
+        } catch (SmartAPIException ex) {
+            log.error("{} while placing order {}", SMART_API_EXCEPTION_OCCURRED, ex.toString());
+            throw new SmartAPIException(String.format("%s in placing order %s", SMART_API_EXCEPTION_ERROR_MSG, ex));
+        } catch (IOException ex) {
+            log.error("{} while placing order {}", IO_EXCEPTION_OCCURRED, ex.getMessage());
+            throw new IOException(String.format("%s in placing order %s", IO_EXCEPTION_ERROR_MSG, ex.getMessage()));
+        } catch (JSONException ex) {
+            log.error("{} while placing order {}", JSON_EXCEPTION_OCCURRED, ex.getMessage());
+            throw new JSONException(String.format("%s in placing order %s", JSON_EXCEPTION_ERROR_MSG, ex.getMessage()));
+        }
+    }
+
+    // Testing market data success for LTP payload
+    @Test
+    public void testMarketDataLTP_Success() throws SmartAPIException, IOException {
+        String url = routes.get("api.market.data");
+        JSONObject params = getMarketDataRequest("LTP");
+        when(smartAPIRequestHandler.postRequest(eq(this.apiKey), eq(url), eq(params), eq(this.accessToken))).thenReturn(createMarketDataResponse());
+        try {
+            JSONObject response = smartAPIRequestHandler.postRequest(this.apiKey, url, params, this.accessToken);
+            JSONObject data = response.getJSONObject("data");
+            assertNotNull(data);
+        } catch (SmartAPIException ex) {
+            log.error("{} while placing order {}", SMART_API_EXCEPTION_OCCURRED, ex.toString());
+            throw new SmartAPIException(String.format("%s in placing order %s", SMART_API_EXCEPTION_ERROR_MSG, ex));
+        } catch (IOException ex) {
+            log.error("{} while placing order {}", IO_EXCEPTION_OCCURRED, ex.getMessage());
+            throw new IOException(String.format("%s in placing order %s", IO_EXCEPTION_ERROR_MSG, ex.getMessage()));
+        } catch (JSONException ex) {
+            log.error("{} while placing order {}", JSON_EXCEPTION_OCCURRED, ex.getMessage());
+            throw new JSONException(String.format("%s in placing order %s", JSON_EXCEPTION_ERROR_MSG, ex.getMessage()));
+        }
+    }
+
+    // Testing market data failure for LTP payload
+    @Test(expected = SmartAPIException.class)
+    public void testMarketDataLTP_Failure() throws SmartAPIException, IOException {
+        // Stub the postRequest method
+        String url = routes.get("api.market.data");
+        JSONObject params = getMarketDataRequest("LTP");
+        when(smartAPIRequestHandler.postRequest(eq(this.apiKey), eq(url), eq(params), eq(this.accessToken)))
+                .thenThrow(new SmartAPIException("API request failed"));
+        try {
+            JSONObject response = smartAPIRequestHandler.postRequest(apiKey, url, params, accessToken);
+            response.getJSONObject("data");
+        } catch (SmartAPIException ex) {
+            log.error("{} while placing order {}", SMART_API_EXCEPTION_OCCURRED, ex.toString());
+            throw new SmartAPIException(String.format("%s in placing order %s", SMART_API_EXCEPTION_ERROR_MSG, ex));
+        } catch (IOException ex) {
+            log.error("{} while placing order {}", IO_EXCEPTION_OCCURRED, ex.getMessage());
+            throw new IOException(String.format("%s in placing order %s", IO_EXCEPTION_ERROR_MSG, ex.getMessage()));
+        } catch (JSONException ex) {
+            log.error("{} while placing order {}", JSON_EXCEPTION_OCCURRED, ex.getMessage());
+            throw new JSONException(String.format("%s in placing order %s", JSON_EXCEPTION_ERROR_MSG, ex.getMessage()));
+        }
+    }
+
+    // Testing market data success for OHLC payload
+    @Test
+    public void testMarketDataOHLC_Success() throws SmartAPIException, IOException {
+        String url = routes.get("api.market.data");
+        JSONObject params = getMarketDataRequest("OHLC");
+        when(smartAPIRequestHandler.postRequest(eq(this.apiKey), eq(url), eq(params), eq(this.accessToken))).thenReturn(createMarketDataResponse());
+        try {
+            JSONObject response = smartAPIRequestHandler.postRequest(this.apiKey, url, params, this.accessToken);
+            JSONObject data = response.getJSONObject("data");
+            assertNotNull(data);
+        } catch (SmartAPIException ex) {
+            log.error("{} while placing order {}", SMART_API_EXCEPTION_OCCURRED, ex.toString());
+            throw new SmartAPIException(String.format("%s in placing order %s", SMART_API_EXCEPTION_ERROR_MSG, ex));
+        } catch (IOException ex) {
+            log.error("{} while placing order {}", IO_EXCEPTION_OCCURRED, ex.getMessage());
+            throw new IOException(String.format("%s in placing order %s", IO_EXCEPTION_ERROR_MSG, ex.getMessage()));
+        } catch (JSONException ex) {
+            log.error("{} while placing order {}", JSON_EXCEPTION_OCCURRED, ex.getMessage());
+            throw new JSONException(String.format("%s in placing order %s", JSON_EXCEPTION_ERROR_MSG, ex.getMessage()));
+        }
+    }
+
+    // Testing market data failure for OHLC payload
+    @Test(expected = SmartAPIException.class)
+    public void testMarketDataOHLC_Failure() throws SmartAPIException, IOException {
+        // Stub the postRequest method
+        String url = routes.get("api.market.data");
+        JSONObject params = getMarketDataRequest("OHLC");
+        when(smartAPIRequestHandler.postRequest(eq(this.apiKey), eq(url), eq(params), eq(this.accessToken)))
+                .thenThrow(new SmartAPIException("API request failed"));
+        try {
+            JSONObject response = smartAPIRequestHandler.postRequest(apiKey, url, params, accessToken);
+            response.getJSONObject("data");
+        } catch (SmartAPIException ex) {
+            log.error("{} while placing order {}", SMART_API_EXCEPTION_OCCURRED, ex.toString());
+            throw new SmartAPIException(String.format("%s in placing order %s", SMART_API_EXCEPTION_ERROR_MSG, ex));
+        } catch (IOException ex) {
+            log.error("{} while placing order {}", IO_EXCEPTION_OCCURRED, ex.getMessage());
+            throw new IOException(String.format("%s in placing order %s", IO_EXCEPTION_ERROR_MSG, ex.getMessage()));
+        } catch (JSONException ex) {
+            log.error("{} while placing order {}", JSON_EXCEPTION_OCCURRED, ex.getMessage());
+            throw new JSONException(String.format("%s in placing order %s", JSON_EXCEPTION_ERROR_MSG, ex.getMessage()));
+        }
+    }
+
+    private JSONObject getMarketDataRequest(String mode) {
+        JSONObject payload = new JSONObject();
+        payload.put("mode", mode);
+        JSONObject exchangeTokens = new JSONObject();
+        JSONArray nseTokens = new JSONArray();
+        nseTokens.put("3045");
+        exchangeTokens.put("NSE", nseTokens);
+        payload.put("exchangeTokens", exchangeTokens);
+        return payload;
+    }
 
 }
