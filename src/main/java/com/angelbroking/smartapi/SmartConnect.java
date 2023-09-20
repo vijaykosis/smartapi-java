@@ -9,6 +9,7 @@ import com.angelbroking.smartapi.models.Order;
 import com.angelbroking.smartapi.models.OrderParams;
 import com.angelbroking.smartapi.models.TokenSet;
 import com.angelbroking.smartapi.models.User;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.codec.digest.DigestUtils;
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -18,6 +19,14 @@ import java.io.IOException;
 import java.net.Proxy;
 import java.util.List;
 
+import static com.angelbroking.smartapi.utils.Constants.IO_EXCEPTION_ERROR_MSG;
+import static com.angelbroking.smartapi.utils.Constants.IO_EXCEPTION_OCCURRED;
+import static com.angelbroking.smartapi.utils.Constants.JSON_EXCEPTION_ERROR_MSG;
+import static com.angelbroking.smartapi.utils.Constants.JSON_EXCEPTION_OCCURRED;
+import static com.angelbroking.smartapi.utils.Constants.SMART_API_EXCEPTION_ERROR_MSG;
+import static com.angelbroking.smartapi.utils.Constants.SMART_API_EXCEPTION_OCCURRED;
+
+@Slf4j
 public class SmartConnect {
 	public static SessionExpiryHook sessionExpiryHook = null;
 	public static boolean ENABLE_LOGGING = false;
@@ -710,12 +719,20 @@ public class SmartConnect {
 	 * @return returns the details of Search Script data.
 	 */
 
-	public String getSearchScrip(JSONObject payload) throws SmartAPIException{
+	public String getSearchScrip(JSONObject payload) throws SmartAPIException, IOException {
 		try {
 			String url = routes.get("api.search.script.data");
 			return smartAPIRequestHandler.postRequestJSONObject(this.apiKey, url, payload, accessToken);
-		} catch (Exception | SmartAPIException e) {
-			return String.format("An unexpected error occurred during the search. %s", e.getMessage());
+		}catch (IOException ex) {
+			log.error("{} while generating session {}", IO_EXCEPTION_OCCURRED, ex.getMessage());
+			throw new IOException(String.format("%s in generating Session  %s", IO_EXCEPTION_ERROR_MSG, ex.getMessage()));
+		} catch (JSONException ex) {
+			log.error("{} while generating session {}", JSON_EXCEPTION_OCCURRED, ex.getMessage());
+			throw new JSONException(String.format("%s in generating Session %s", JSON_EXCEPTION_ERROR_MSG, ex.getMessage()));
+		} catch (SmartAPIException ex) {
+			log.error("{} while generating session {}", SMART_API_EXCEPTION_OCCURRED, ex.toString());
+			throw new SmartAPIException(String.format("%s in generating Session %s", SMART_API_EXCEPTION_ERROR_MSG, ex));
+
 		}
 	}
 

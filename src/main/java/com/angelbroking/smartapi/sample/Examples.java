@@ -273,7 +273,7 @@ public class Examples {
 	}
 
 	/** Search Scrip Data */
-	public void getSearchScrip(SmartConnect smartConnect) throws SmartAPIException{
+	public void getSearchScrip(SmartConnect smartConnect) throws SmartAPIException, IOException {
 		JSONObject payload = new JSONObject();
 		payload.put("exchange", "MCX");
 		payload.put("searchscrip", "Crude");

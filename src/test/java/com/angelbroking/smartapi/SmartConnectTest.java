@@ -9,6 +9,8 @@ import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
 
+import java.io.IOException;
+
 import static org.junit.Assert.assertEquals;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -26,7 +28,7 @@ public class SmartConnectTest {
     }
 
     @Test
-    public void testGetSearchScript_Success() throws SmartAPIException {
+    public void testGetSearchScript_Success() throws SmartAPIException, IOException {
         // Mock the necessary objects
         JSONObject payload = new JSONObject();
         when(smartConnect.getSearchScrip(payload)).thenReturn("response-data");
@@ -39,7 +41,7 @@ public class SmartConnectTest {
     }
 
     @Test(expected = SmartAPIException.class)
-    public void testGetSearchScript_Exception() throws SmartAPIException {
+    public void testGetSearchScript_Exception() throws SmartAPIException, IOException {
         JSONObject payload = new JSONObject();
         SmartAPIException expectedException = new SmartAPIException("Simulated SmartAPIException");
         when(smartConnect.getSearchScrip(payload)).thenThrow(expectedException);
