@@ -24,6 +24,9 @@ import com.angelbroking.smartapi.http.exceptions.TokenException;
 
 import okhttp3.Response;
 
+import static com.angelbroking.smartapi.utils.Constants.APIKEY_EXCEPTION_MESSAGE;
+import static com.angelbroking.smartapi.utils.Constants.TOKEN_EXCEPTION_MESSAGE;
+
 /**
  * Response handler for handling all the responses.
  */
@@ -66,7 +69,7 @@ public class SmartAPIResponseHandler {
 			return new TokenException(jsonObject.getString("message"), code);
 
 		case "AG8001":
-                return new TokenException("Unauthorized access. Please provide a valid or non-expired jwtToken.", code);
+                return new TokenException(TOKEN_EXCEPTION_MESSAGE, code);
             case "AG8002":
                 return new DataException(jsonObject.getString("message"), code);
 
@@ -97,7 +100,7 @@ public class SmartAPIResponseHandler {
 		case "AB1011":
 			return new PermissionException(jsonObject.getString("message"), code);
             case "AG8004":
-                return new ApiKeyException("Invalid or missing api key. Please provide a valid api key.", code);
+                return new ApiKeyException(APIKEY_EXCEPTION_MESSAGE, code);
 		default:
 			return new SmartAPIException(jsonObject.getString("data not found"));
 		}
