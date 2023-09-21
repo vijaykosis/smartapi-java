@@ -277,7 +277,7 @@ public class Examples {
 		JSONObject payload = new JSONObject();
 		payload.put("exchange", "MCX");
 		payload.put("searchscrip", "Crude");
-		String response = smartConnect.getSearchScrip(payload);
+		smartConnect.getSearchScrip(payload);
 	}
 
 
