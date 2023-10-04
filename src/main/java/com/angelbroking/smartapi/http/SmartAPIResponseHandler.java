@@ -110,8 +110,8 @@ public class SmartAPIResponseHandler {
         if (response.code() == 200) {
             return handleResponse(response,body);
         } else if (response.code() == 400){
-            log.error("Bad request. Please provide a valid input");
-            return "Bad request. Please provide a valid input";
+            log.error("Bad request. Please provide valid input");
+            return "Bad request. Please provide valid input";
         }else {
             log.error("Response or response body is null.");
             throw new IllegalArgumentException("Response or response body is null.");
