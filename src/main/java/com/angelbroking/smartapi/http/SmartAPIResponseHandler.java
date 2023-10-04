@@ -110,8 +110,8 @@ public class SmartAPIResponseHandler {
         if (response.code() == 200) {
             return handleResponse(response,body);
         } else if (response.code() == 400){
-            log.error("Invalid exchange provided. Please provide a valid exchange");
-            return "Invalid exchange provided. Please provide a valid exchange";
+            log.error("Bad request. Please provide a valid input");
+            return "Bad request. Please provide a valid input";
         }else {
             log.error("Response or response body is null.");
             throw new IllegalArgumentException("Response or response body is null.");
@@ -121,8 +121,7 @@ public class SmartAPIResponseHandler {
     private String handleResponse(Response response, String body) throws SmartAPIException, IOException {
         try {
             JSONObject responseBodyJson = new JSONObject(body);
-            String errorCode = responseBodyJson.optString("errorCode");
-            if(errorCode == null || errorCode.length() == 0) {
+            if(responseBodyJson.getBoolean("status")) {
                 JSONArray dataArray = responseBodyJson.optJSONArray("data");
                 if (dataArray != null && dataArray.length() > 0) {
                     List<SearchScripResponseDTO> stockDTOList = parseStockDTOList(dataArray);
