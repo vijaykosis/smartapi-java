@@ -7,6 +7,7 @@ import java.util.HashSet;
 import java.util.Scanner;
 import java.util.Set;
 
+import com.warrenstrange.googleauth.GoogleAuthenticator;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
@@ -28,18 +29,33 @@ public class SmartStreamTickerTest {
 	
 	@BeforeAll
 	public static void initClass() throws InterruptedException {
-		clientID = System.getProperty("clientID");
-		clientPass = System.getProperty("clientPass");
-		apiKey = System.getProperty("apiKey");
-		
-		Scanner sc = new Scanner(System.in);
-		System.out.print("enter totp: ");
-		totp = sc.nextLine();
-		
+		//    clientID = System.getProperty("clientID");
+//    clientPass = System.getProperty("clientPass");
+//    apiKey = System.getProperty("apiKey");
+//
+//    Scanner sc = new Scanner(System.in);
+//    System.out.print("enter totp: ");
+//    totp = sc.nextLine();
+
+//       SmartConnect smartConnect = new SmartConnect("VG2s34Cq"); // PROVIDE YOUR API KEY HERE
+//       String clientId = "A52163134";
+//       GoogleAuthenticator gAuth = new GoogleAuthenticator();
+//       String totp_key = "DOBXCSIGFBJAKJH4BUDCTCLKEI";
+//       String tOTP = String.valueOf(gAuth.getTotpPassword(totp_key));
+//       User user = smartConnect.generateSession("A52163134", "4321", tOTP);
+		clientID = "A52163134";
+		clientPass = "4321";
+		apiKey = "VG2s34Cq";
+
+		GoogleAuthenticator gAuth = new GoogleAuthenticator();
+		String totp_key = "DOBXCSIGFBJAKJH4BUDCTCLKEI";
+		totp = String.valueOf(gAuth.getTotpPassword(totp_key));
+
 		SmartConnect smartConnect = new SmartConnect(apiKey);
 		User user = smartConnect.generateSession(clientID, clientPass, totp);
 		feedToken = user.getFeedToken();
-//		feedToken = "123";
+//    feedToken = "123";
+
 	}
 	
 	@Test
