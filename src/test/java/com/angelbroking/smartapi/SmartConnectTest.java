@@ -14,6 +14,7 @@ import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
 
 import java.io.IOException;
+import java.util.Optional;
 
 import static com.angelbroking.smartapi.utils.Constants.IO_EXCEPTION_ERROR_MSG;
 import static com.angelbroking.smartapi.utils.Constants.IO_EXCEPTION_OCCURRED;
@@ -130,6 +131,92 @@ public class SmartConnectTest {
         return jsonObject;
     }
 
+    public static JSONObject getAllHoldingsResponse() {
+        JSONObject response = new JSONObject();
+
+        // Create the "data" object
+        JSONObject dataObject = new JSONObject();
+        dataObject.put("totalholdingvalue", 77);
+        dataObject.put("totalprofitandloss", 0.5);
+        dataObject.put("totalpnlpercentage", 0.65);
+        dataObject.put("totalinvvalue", 77);
+
+        // Create the "holdings" array
+        JSONArray holdingsArray = new JSONArray();
+
+        // Create individual "holding" objects and add them to the array
+        JSONObject holding1 = new JSONObject();
+        holding1.put("t1quantity", 0);
+        holding1.put("authorisedquantity", 0);
+        holding1.put("product", "DELIVERY");
+        holding1.put("quantity", 1);
+        holding1.put("ltp", 47.95);
+        holding1.put("haircut", 0);
+        holding1.put("profitandloss", 0);
+        holding1.put("collateraltype", Optional.ofNullable(null));
+        holding1.put("averageprice", 48.15);
+        holding1.put("tradingsymbol", "CENTRALBK-EQ");
+        holding1.put("pnlpercentage", -0.42);
+        holding1.put("exchange", "NSE");
+        holding1.put("close", 49.95);
+        holding1.put("isin", "INE483A01010");
+        holding1.put("realisedquantity", 0);
+        holding1.put("symboltoken", "14894");
+        holding1.put("collateralquantity", Optional.ofNullable(null));
+        holdingsArray.put(holding1);
+
+        JSONObject holding2 = new JSONObject();
+        holding2.put("t1quantity", 0);
+        holding2.put("authorisedquantity", 0);
+        holding2.put("product", "DELIVERY");
+        holding2.put("quantity", 2);
+        holding2.put("ltp", 11.2);
+        holding2.put("haircut", 0);
+        holding2.put("profitandloss", 1);
+        holding2.put("collateraltype", Optional.ofNullable(null));
+        holding2.put("averageprice", 10.85);
+        holding2.put("tradingsymbol", "IDEA-EQ");
+        holding2.put("pnlpercentage", 3.23);
+        holding2.put("exchange", "NSE");
+        holding2.put("close", 10.95);
+        holding2.put("isin", "INE669E01016");
+        holding2.put("realisedquantity", 0);
+        holding2.put("symboltoken", "14366");
+        holding2.put("collateralquantity", Optional.ofNullable(null));
+        holdingsArray.put(holding2);
+
+        JSONObject holding3 = new JSONObject();
+        holding3.put("t1quantity", 0);
+        holding3.put("authorisedquantity", 0);
+        holding3.put("product", "DELIVERY");
+        holding3.put("quantity", 2);
+        holding3.put("ltp", 3.6);
+        holding3.put("haircut", 0);
+        holding3.put("profitandloss", 0);
+        holding3.put("collateraltype", Optional.ofNullable(null));
+        holding3.put("averageprice", 3.6);
+        holding3.put("tradingsymbol", "VIKASECO-BE");
+        holding3.put("pnlpercentage", 0);
+        holding3.put("exchange", "NSE");
+        holding3.put("close", 3.75);
+        holding3.put("isin", "INE806A01020");
+        holding3.put("realisedquantity", 0);
+        holding3.put("symboltoken", "25760");
+        holding3.put("collateralquantity", Optional.ofNullable(null));
+        holdingsArray.put(holding3);
+
+        // Add the "data" object and "holdings" array to the main response object
+        dataObject.put("holdings", holdingsArray);
+        response.put("data", dataObject);
+
+        // Add other properties to the response object if needed
+        response.put("message", "SUCCESS");
+        response.put("errorcode", "");
+        response.put("status", true);
+
+        // Print the JSON response
+        return response;
+    }
     @Before
     public void setup() {
         apiKey = System.getProperty("apiKey");
@@ -282,4 +369,48 @@ public class SmartConnectTest {
         return payload;
     }
 
+    @Test
+    public void testRetrieveAllHoldings_successfully() throws SmartAPIException, IOException {
+        String url = routes.get("api.order.rms.AllHolding");
+        when(smartAPIRequestHandler.getRequest(eq(this.apiKey), eq(url), eq(this.accessToken))).thenReturn(getAllHoldingsResponse());
+
+        try {
+            JSONObject response = smartAPIRequestHandler.getRequest(apiKey, url, accessToken);
+            JSONObject data = response.getJSONObject("data");
+            JSONArray holding = data.getJSONArray("holdings");
+
+            assertNotNull(data);
+            assertNotNull(holding);
+        } catch (SmartAPIException ex) {
+            log.error("{} while placing order {}", SMART_API_EXCEPTION_OCCURRED, ex.toString());
+            throw new SmartAPIException(String.format("%s in placing order %s", SMART_API_EXCEPTION_ERROR_MSG, ex));
+        } catch (IOException ex) {
+            log.error("{} while placing order {}", IO_EXCEPTION_OCCURRED, ex.getMessage());
+            throw new IOException(String.format("%s in placing order %s", IO_EXCEPTION_ERROR_MSG, ex.getMessage()));
+        } catch (JSONException ex) {
+            log.error("{} while placing order {}", JSON_EXCEPTION_OCCURRED, ex.getMessage());
+            throw new JSONException(String.format("%s in placing order %s", JSON_EXCEPTION_ERROR_MSG, ex.getMessage()));
+        }
+    }
+
+    @Test(expected = SmartAPIException.class)
+    public void testRetrieveAllHoldings_failure() throws SmartAPIException, IOException {
+        String url = routes.get("api.order.rms.AllHolding");
+        when(smartAPIRequestHandler.getRequest(eq(this.apiKey), eq(url), eq(this.accessToken))).thenThrow(SmartAPIException.class);
+
+        try {
+            JSONObject response = smartAPIRequestHandler.getRequest(apiKey, url, accessToken);
+            JSONObject data = response.getJSONObject("data");
+            assertNotNull(data);
+        } catch (SmartAPIException ex) {
+            log.error("{} while placing order {}", SMART_API_EXCEPTION_OCCURRED, ex.toString());
+            throw new SmartAPIException(String.format("%s in placing order %s", SMART_API_EXCEPTION_ERROR_MSG, ex));
+        } catch (IOException ex) {
+            log.error("{} while placing order {}", IO_EXCEPTION_OCCURRED, ex.getMessage());
+            throw new IOException(String.format("%s in placing order %s", IO_EXCEPTION_ERROR_MSG, ex.getMessage()));
+        } catch (JSONException ex) {
+            log.error("{} while placing order {}", JSON_EXCEPTION_OCCURRED, ex.getMessage());
+            throw new JSONException(String.format("%s in placing order %s", JSON_EXCEPTION_ERROR_MSG, ex.getMessage()));
+        }
+    }
 }

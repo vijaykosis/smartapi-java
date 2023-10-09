@@ -63,6 +63,9 @@ public class Test {
 			/* System.out.println("getHolding"); */
 			examples.getHolding(smartConnect);
 
+			/* System.out.println("getAllHolding"); */
+			examples.getAllHolding(smartConnect);
+
 			/* System.out.println("getPosition"); */
 			examples.getPosition(smartConnect);
 
