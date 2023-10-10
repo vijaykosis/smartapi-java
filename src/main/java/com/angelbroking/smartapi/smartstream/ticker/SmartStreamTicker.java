@@ -264,21 +264,23 @@ public class SmartStreamTicker {
 	public void subscribe(SmartStreamSubsMode mode, Set<TokenID> tokens) {
 		if (ws != null) {
 			if (ws.isOpen()) {
-				boolean containsNSECM = false;
 				for (TokenID token : tokens) {
-					if (ExchangeType.NSE_CM.equals(token.getExchangeType())) {
-						containsNSECM = true;
-					}
-					if (containsNSECM) {
+					if (ExchangeType.NSE_CM.equals(token.getExchangeType()) && SmartStreamSubsMode.DEPTH_20.equals(mode)) {
 						if (tokens.size() < 50) {
-							tokensByModeMap.put(mode, tokens);
 							JSONObject wsMWJSONRequest = getApiRequest(SmartStreamAction.SUBS, mode, tokens);
 							ws.sendText(wsMWJSONRequest.toString());
+							tokensByModeMap.put(mode, tokens);
 						} else {
-							smartStreamListener.onError(getErrorHolder(new SmartAPIException("Token size should be more than 50 to subscribe", "504")));
+							smartStreamListener.onError(getErrorHolder(new SmartAPIException("Token size should be less than 50", "504")));
 						}
 					} else {
-						smartStreamListener.onError(getErrorHolder(new SmartAPIException("Invalid Exchange Type: Please check the exchange type and try again", "504")));
+						if (!ExchangeType.NSE_CM.equals(token.getExchangeType()) && SmartStreamSubsMode.DEPTH_20.equals(mode)) {
+							smartStreamListener.onError(getErrorHolder(new SmartAPIException("Invalid Exchange Type: Please check the exchange type and try again", "504")));
+						} else {
+							JSONObject wsMWJSONRequest = getApiRequest(SmartStreamAction.SUBS, mode, tokens);
+							ws.sendText(wsMWJSONRequest.toString());
+							tokensByModeMap.put(mode, tokens);
+						}
 					}
 				}
 			} else {
