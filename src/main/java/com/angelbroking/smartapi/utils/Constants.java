@@ -85,4 +85,18 @@ public class Constants {
     public static final String SMART_API_EXCEPTION_OCCURRED = "SmartAPIException occurred ";
     public static final String IO_EXCEPTION_OCCURRED = "IOException occurred ";
     public static final String JSON_EXCEPTION_OCCURRED = "JSONException occurred ";
+
+
+    /**
+     * Depth Constants
+     */
+    public static final int NUM_PACKETS_FOR_DEPTH = 20;
+    public static final int PACKET_SIZE_FOR_DEPTH20 = 10;
+    public static final int EXCHANGE_TIMESTAMP_FOR_DEPTH20 = 27;
+    public static final int PACKET_RECEIVED_TIME_FOR_DEPTH20 = 35;
+    public static final int BEST_TWENTY_BUY_DATA_POSITION = 43;
+    public static final int BEST_TWENTY_SELL_DATA_POSITION = 243;
+    public static final int QUANTITY_OFFSET_FOR_DEPTH20 = 0;
+    public static final int PRICE_OFFSET_FOR_DEPTH20 = 4;
+    public static final int NUMBER_OF_ORDERS_OFFSET_FOR_DEPTH20 = 8;
 }
