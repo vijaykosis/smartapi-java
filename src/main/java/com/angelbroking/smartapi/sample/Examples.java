@@ -34,9 +34,9 @@ public class Examples {
 
 	/* VARIETY */
 	/*
-	 * VARIETY_NORMAL: Normal Order (Regular) 
+	 * VARIETY_NORMAL: Normal Order (Regular)
 	 * VARIETY_AMO: After Market Order
-	 * VARIETY_STOPLOSS: Stop loss order 
+	 * VARIETY_STOPLOSS: Stop loss order
 	 * VARIETY_ROBO: ROBO (Bracket) Order
 	 */
 	/* TRANSACTION TYPE */
@@ -46,7 +46,7 @@ public class Examples {
 
 	/* ORDER TYPE */
 	/*
-	 * ORDER_TYPE_MARKET: Market Order(MKT) 
+	 * ORDER_TYPE_MARKET: Market Order(MKT)
 	 * ORDER_TYPE_LIMIT: Limit Order(L)
 	 * ORDER_TYPE_STOPLOSS_LIMIT: Stop Loss Limit Order(SL)
 	 * ORDER_TYPE_STOPLOSS_MARKET: Stop Loss Market Order(SL-M)
@@ -54,27 +54,27 @@ public class Examples {
 
 	/* PRODUCT TYPE */
 	/*
-	 * PRODUCT_DELIVERY: Cash & Carry for equity (CNC) 
+	 * PRODUCT_DELIVERY: Cash & Carry for equity (CNC)
 	 * PRODUCT_CARRYFORWARD: Normal
-	 * for futures and options (NRML) 
+	 * for futures and options (NRML)
 	 * PRODUCT_MARGIN: Margin Delivery
-	 * PRODUCT_INTRADAY: Margin Intraday Squareoff (MIS) 
+	 * PRODUCT_INTRADAY: Margin Intraday Squareoff (MIS)
 	 * PRODUCT_BO: Bracket Order
 	 * (Only for ROBO)
 	 */
 
 	/* DURATION */
 	/*
-	 * DURATION_DAY: Valid for a day 
+	 * DURATION_DAY: Valid for a day
 	 * DURATION_IOC: Immediate or Cancel
 	 */
 
 	/* EXCHANGE */
 	/*
-	 * EXCHANGE_BSE: BSE Equity 
-	 * EXCHANGE_NSE: NSE Equity 
-	 * EXCHANGE_NFO: NSE Future and Options 
-	 * EXCHANGE_CDS: NSE Currency 
+	 * EXCHANGE_BSE: BSE Equity
+	 * EXCHANGE_NSE: NSE Equity
+	 * EXCHANGE_NFO: NSE Future and Options
+	 * EXCHANGE_CDS: NSE Currency
 	 * EXCHANGE_NCDEX: NCDEX Commodity
 	 * EXCHANGE_MCX: MCX Commodity
 	 */
@@ -272,6 +272,7 @@ public class Examples {
 		String response = smartConnect.candleData(requestObejct);
 	}
 
+
 	/** Search Scrip Data */
 	public void getSearchScrip(SmartConnect smartConnect) throws SmartAPIException, IOException {
 		JSONObject payload = new JSONObject();
@@ -279,6 +280,26 @@ public class Examples {
 		payload.put("searchscrip", "Crude");
 		smartConnect.getSearchScrip(payload);
 	}
+
+	/**
+	 * Market Data
+	 * To Retrieve Market Data with different modes use.
+	 *  e.g:
+	 *      payload.put("mode", "FULL");
+	 *      payload.put("mode", "LTP");
+	 *      payload.put("mode", "OHLC");
+	 */
+    public void getMarketData(SmartConnect smartConnect) throws SmartAPIException, IOException {
+        JSONObject payload = new JSONObject();
+        payload.put("mode", "FULL"); // You can change the mode as needed
+        JSONObject exchangeTokens = new JSONObject();
+        JSONArray nseTokens = new JSONArray();
+        nseTokens.put("3045");
+        exchangeTokens.put("NSE", nseTokens);
+        payload.put("exchangeTokens", exchangeTokens);
+        JSONObject response = smartConnect.marketData(payload);
+    }
+
 
 
 	public void tickerUsage(String clientId, String feedToken, String strWatchListScript, String task)

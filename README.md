@@ -278,6 +278,7 @@ SmartAPI is a set of REST-like APIs that expose many capabilities required to bu
 		String response = smartConnect.candleData(requestObejct);
 	}
 
+
     /** Search Scrip Data */
     public void getSearchScrip(SmartConnect smartConnect) throws SmartAPIException{
         JSONObject payload = new JSONObject();
@@ -287,6 +288,50 @@ SmartAPI is a set of REST-like APIs that expose many capabilities required to bu
     }
         
 	/** Logout user. */
+
+    /** Market Data  FULL*/
+    public void getMarketData(SmartConnect smartConnect) {
+      
+        JSONObject payload = new JSONObject();
+        payload.put("mode", "FULL");
+        JSONObject exchangeTokens = new JSONObject();
+        JSONArray nseTokens = new JSONArray();
+        nseTokens.put("3045");
+        exchangeTokens.put("NSE", nseTokens);
+        payload.put("exchangeTokens", exchangeTokens);
+        JSONObject response = smartConnect.marketData(payload);
+        
+        }
+
+    /** Market Data  OHLC*/
+    public void getMarketData(SmartConnect smartConnect) {
+
+        JSONObject payload = new JSONObject();
+        payload.put("mode", "OHLC");
+        JSONObject exchangeTokens = new JSONObject();
+        JSONArray nseTokens = new JSONArray();
+        nseTokens.put("3045");
+        exchangeTokens.put("NSE", nseTokens);
+        payload.put("exchangeTokens", exchangeTokens);
+        JSONObject response = smartConnect.marketData(payload);
+
+        }
+
+    /** Market Data  LTP*/
+    public void getMarketData(SmartConnect smartConnect) {
+
+        JSONObject payload = new JSONObject();
+        payload.put("mode", "LTP");
+        JSONObject exchangeTokens = new JSONObject();
+        JSONArray nseTokens = new JSONArray();
+        nseTokens.put("3045");
+        exchangeTokens.put("NSE", nseTokens);
+        payload.put("exchangeTokens", exchangeTokens);
+        JSONObject response = smartConnect.marketData(payload);
+
+        }
+
+/** Logout user. */
 	public void logout(SmartConnect smartConnect) throws SmartAPIException, IOException {
 		/** Logout user and kill the session. */
 		JSONObject jsonObject = smartConnect.logout();
