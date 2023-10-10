@@ -491,28 +491,6 @@ public class SmartConnect {
 	}
 
 	/**
-	 * Retrieves All Holdings.
-	 *
-	 * @return Object of Holding.
-	 *
-	 */
-	public JSONObject getAllHolding() throws SmartAPIException, IOException {
-		try {
-			String url = routes.get("api.order.rms.AllHolding");
-			return smartAPIRequestHandler.getRequest(this.apiKey, url, accessToken);
-		}catch (SmartAPIException ex) {
-			log.error("{} while placing order {}", SMART_API_EXCEPTION_OCCURRED, ex.toString());
-			throw new SmartAPIException(String.format("%s in placing order %s", SMART_API_EXCEPTION_ERROR_MSG, ex));
-		} catch (IOException ex) {
-			log.error("{} while placing order {}", IO_EXCEPTION_OCCURRED, ex.getMessage());
-			throw new IOException(String.format("%s in placing order %s", IO_EXCEPTION_ERROR_MSG, ex.getMessage()));
-		} catch (JSONException ex) {
-			log.error("{} while placing order {}", JSON_EXCEPTION_OCCURRED, ex.getMessage());
-			throw new JSONException(String.format("%s in placing order %s", JSON_EXCEPTION_ERROR_MSG, ex.getMessage()));
-		}
-	}
-
-	/**
 	 * Retrieves position.
 	 *
 	 * @return Object of position.

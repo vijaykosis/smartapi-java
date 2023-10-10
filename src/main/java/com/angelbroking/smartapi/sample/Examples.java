@@ -165,12 +165,6 @@ public class Examples {
 		JSONObject response = smartConnect.getHolding();
 	}
 
-	/** Get All Holdings */
-	public void getAllHolding(SmartConnect smartConnect) throws SmartAPIException, IOException {
-		// Returns Holding.
-		JSONObject response = smartConnect.getAllHolding();
-	}
-
 	/** Get Position */
 	public void getPosition(SmartConnect smartConnect) throws SmartAPIException, IOException {
 		// Returns Position.
