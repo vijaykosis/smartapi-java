@@ -86,7 +86,6 @@ public class Constants {
     public static final String IO_EXCEPTION_OCCURRED = "IOException occurred ";
     public static final String JSON_EXCEPTION_OCCURRED = "JSONException occurred ";
 
-
     /**
      * Depth Constants
      */
@@ -99,4 +98,7 @@ public class Constants {
     public static final int QUANTITY_OFFSET_FOR_DEPTH20 = 0;
     public static final int PRICE_OFFSET_FOR_DEPTH20 = 4;
     public static final int NUMBER_OF_ORDERS_OFFSET_FOR_DEPTH20 = 8;
+    public static final String TOKEN_EXCEPTION_MESSAGE = "Unauthorized access. Please provide a valid or non-expired jwtToken.";
+    public static final String APIKEY_EXCEPTION_MESSAGE = "Invalid or missing api key. Please provide a valid api key.";
+
 }
