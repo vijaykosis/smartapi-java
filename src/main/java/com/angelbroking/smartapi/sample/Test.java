@@ -19,14 +19,14 @@ public class Test {
 			/*
 			 * Set session expiry callback. smartConnect.setSessionExpiryHook(new
 			 * SessionExpiryHook() {
-			 * 
+			 *
 			 * @Override public void sessionExpired() {
 			 * System.out.println("session expired"); } });
-			 * 
+			 *
 			 * User user = smartConnect.generateSession("<clientId>", "<password>");
 			 * smartConnect.setAccessToken(user.getAccessToken());
 			 * smartConnect.setUserId(user.getUserId());
-			 * 
+			 *
 			 * /* token re-generate
 			 */
 			/*
@@ -39,7 +39,7 @@ public class Test {
 			/* System.out.println("getProfile"); */
 			examples.getProfile(smartConnect);
 
-			System.out.println("placeOrder");
+			/* System.out.println("placeOrder"); */
 			examples.placeOrder(smartConnect);
 
 			/* System.out.println("modifyOrder"); */
@@ -87,12 +87,20 @@ public class Test {
 			/* System.out.println("Historic candle Data"); */
 			examples.getCandleData(smartConnect);
 
+
+			/* System.out.println("Search script api"); */
+			examples.getSearchScrip(smartConnect);
+
+			/* System.out.println("Market Data"); */
+			examples.getMarketData(smartConnect);
+
+
 			/* System.out.println("logout"); */
 			examples.logout(smartConnect);
 
 			/* SmartAPITicker */
 			String clientId = "<clientId>";
-			User user = smartConnect.generateSession("<clientId>", "<password>");
+			User user = smartConnect.generateSession("<clientId>", "<password>", "<totp>");
 			String feedToken = user.getFeedToken();
 			String strWatchListScript = "nse_cm|2885&nse_cm|1594&nse_cm|11536&mcx_fo|221658";
 			String task = "mw";
@@ -102,10 +110,10 @@ public class Test {
 			/*
 			 * String jwtToken = user.getAccessToken(); String apiKey = "smartapi_key";
 			 * String actionType = "subscribe"; String feedType = "order_feed";
-			 * 
+			 *
 			 * examples.smartWebSocketUsage(clientId, jwtToken, apiKey, actionType,
 			 * feedType);
-			 * 
+			 *
 			 */
 
 		} catch (Exception e) {

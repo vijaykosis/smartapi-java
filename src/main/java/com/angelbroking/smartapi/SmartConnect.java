@@ -1,14 +1,5 @@
 package com.angelbroking.smartapi;
 
-import java.io.IOException;
-import java.net.Proxy;
-import java.util.List;
-
-import org.apache.commons.codec.digest.DigestUtils;
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
-
 import com.angelbroking.smartapi.http.SessionExpiryHook;
 import com.angelbroking.smartapi.http.SmartAPIRequestHandler;
 import com.angelbroking.smartapi.http.exceptions.SmartAPIException;
@@ -18,7 +9,26 @@ import com.angelbroking.smartapi.models.Order;
 import com.angelbroking.smartapi.models.OrderParams;
 import com.angelbroking.smartapi.models.TokenSet;
 import com.angelbroking.smartapi.models.User;
+import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.codec.digest.DigestUtils;
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 
+
+
+import java.io.IOException;
+import java.net.Proxy;
+import java.util.List;
+
+import static com.angelbroking.smartapi.utils.Constants.IO_EXCEPTION_ERROR_MSG;
+import static com.angelbroking.smartapi.utils.Constants.IO_EXCEPTION_OCCURRED;
+import static com.angelbroking.smartapi.utils.Constants.JSON_EXCEPTION_ERROR_MSG;
+import static com.angelbroking.smartapi.utils.Constants.JSON_EXCEPTION_OCCURRED;
+import static com.angelbroking.smartapi.utils.Constants.SMART_API_EXCEPTION_ERROR_MSG;
+import static com.angelbroking.smartapi.utils.Constants.SMART_API_EXCEPTION_OCCURRED;
+
+@Slf4j
 public class SmartConnect {
 	public static SessionExpiryHook sessionExpiryHook = null;
 	public static boolean ENABLE_LOGGING = false;
@@ -50,7 +60,7 @@ public class SmartConnect {
 
 	/**
 	 * Registers callback for session error.
-	 * 
+	 *
 	 * @param hook can be set to get callback when session is expired.
 	 */
 	public void setSessionExpiryHook(SessionExpiryHook hook) {
@@ -59,7 +69,7 @@ public class SmartConnect {
 
 	/**
 	 * Returns apiKey of the App.
-	 * 
+	 *
 	 * @return String apiKey is returned.
 	 * @throws NullPointerException if _apiKey is not found.
 	 */
@@ -72,7 +82,7 @@ public class SmartConnect {
 
 	/**
 	 * Returns accessToken.
-	 * 
+	 *
 	 * @return String access_token is returned.
 	 * @throws NullPointerException if accessToken is null.
 	 */
@@ -85,7 +95,7 @@ public class SmartConnect {
 
 	/**
 	 * Returns userId.
-	 * 
+	 *
 	 * @return String userId is returned.
 	 * @throws NullPointerException if userId is null.
 	 */
@@ -99,7 +109,7 @@ public class SmartConnect {
 
 	/**
 	 * Set userId.
-	 * 
+	 *
 	 * @param id is user_id.
 	 */
 	public void setUserId(String id) {
@@ -108,7 +118,7 @@ public class SmartConnect {
 
 	/**
 	 * Returns publicToken.
-	 * 
+	 *
 	 * @throws NullPointerException if publicToken is null.
 	 * @return String public token is returned.
 	 */
@@ -122,7 +132,7 @@ public class SmartConnect {
 
 	/**
 	 * Set the accessToken received after a successful authentication.
-	 * 
+	 *
 	 * @param accessToken is the access token received after sending request token
 	 *                    and api secret.
 	 */
@@ -132,7 +142,7 @@ public class SmartConnect {
 
 	/**
 	 * Set publicToken.
-	 * 
+	 *
 	 * @param publicToken is the public token received after sending request token
 	 *                    and api secret.
 	 */
@@ -142,7 +152,7 @@ public class SmartConnect {
 
 	/**
 	 * Retrieves login url
-	 * 
+	 *
 	 * @return String loginUrl is returned.
 	 */
 	public String getLoginURL() throws NullPointerException {
@@ -153,13 +163,13 @@ public class SmartConnect {
 	/**
 	 * Do the token exchange with the `request_token` obtained after the login flow,
 	 * and retrieve the `access_token` required for all subsequent requests.
-	 * 
+	 *
 	 * @param requestToken received from login process.
 	 * @param apiSecret    which is unique for each aap.
 	 * @return User is the user model which contains user and session details.
-	 * 
+	 *
 	 */
-	public User generateSession(String clientCode, String password) {
+	public User generateSession(String clientCode, String password, String totp) {
 		try {
 			smartAPIRequestHandler = new SmartAPIRequestHandler(proxy);
 
@@ -167,6 +177,7 @@ public class SmartConnect {
 			JSONObject params = new JSONObject();
 			params.put("clientcode", clientCode);
 			params.put("password", password);
+			params.put("totp", totp);
 
 			JSONObject loginResultObject = smartAPIRequestHandler.postRequest(this.apiKey, routes.getLoginUrl(),
 					params);
@@ -190,11 +201,11 @@ public class SmartConnect {
 
 	/**
 	 * Get a new access token using refresh token.
-	 * 
+	 *
 	 * @param refreshToken is the refresh token obtained after generateSession.
 	 * @param apiSecret    is unique for each app.
 	 * @return TokenSet contains user id, refresh token, api secret.
-	 * 
+	 *
 	 */
 	public TokenSet renewAccessToken(String accessToken, String refreshToken) {
 		try {
@@ -224,7 +235,7 @@ public class SmartConnect {
 
 	/**
 	 * Hex encodes sha256 output for android support.
-	 * 
+	 *
 	 * @return Hex encoded String.
 	 * @param str is the String that has to be encrypted.
 	 */
@@ -238,9 +249,9 @@ public class SmartConnect {
 
 	/**
 	 * Get the profile details of the use.
-	 * 
+	 *
 	 * @return Profile is a POJO which contains profile related data.
-	 * 
+	 *
 	 */
 	public User getProfile() {
 		try {
@@ -255,12 +266,12 @@ public class SmartConnect {
 
 	/**
 	 * Places an order.
-	 * 
+	 *
 	 * @param orderParams is Order params.
 	 * @param variety     variety="regular". Order variety can be bo, co, amo,
 	 *                    regular.
 	 * @return Order contains only orderId.
-	 * 
+	 *
 	 */
 	public Order placeOrder(OrderParams orderParams, String variety) {
 
@@ -317,7 +328,7 @@ public class SmartConnect {
 	 *                    regular.
 	 * @param orderId     order id of the order being modified.
 	 * @return Order object contains only orderId.
-	 * 
+	 *
 	 */
 	public Order modifyOrder(String orderId, OrderParams orderParams, String variety) {
 		try {
@@ -357,12 +368,12 @@ public class SmartConnect {
 
 	/**
 	 * Cancels an order.
-	 * 
+	 *
 	 * @param orderId order id of the order to be cancelled.
 	 * @param variety [variety="regular"]. Order variety can be bo, co, amo,
 	 *                regular.
 	 * @return Order object contains only orderId.
-	 * 
+	 *
 	 */
 	public Order cancelOrder(String orderId, String variety) {
 		try {
@@ -383,11 +394,11 @@ public class SmartConnect {
 
 	/**
 	 * Returns list of different stages an order has gone through.
-	 * 
+	 *
 	 * @return List of multiple stages an order has gone through in the system.
 	 * @throws SmartAPIException is thrown for all Smart API trade related errors.
 	 * @param orderId is the order id which is obtained from orderbook.
-	 * 
+	 *
 	 */
 	@SuppressWarnings({})
 	public JSONObject getOrderHistory(String clientId) {
@@ -407,9 +418,9 @@ public class SmartConnect {
 	 * Retrieves last price. User can either pass exchange with tradingsymbol or
 	 * instrument token only. For example {NSE:NIFTY 50, BSE:SENSEX} or {256265,
 	 * 265}.
-	 * 
+	 *
 	 * @return Map of String and LTPQuote.
-	 * 
+	 *
 	 */
 	public JSONObject getLTP(String exchange, String tradingSymbol, String symboltoken) {
 		try {
@@ -430,7 +441,7 @@ public class SmartConnect {
 
 	/**
 	 * Retrieves list of trades executed.
-	 * 
+	 *
 	 * @return List of trades.
 	 */
 	public JSONObject getTrades() {
@@ -446,7 +457,7 @@ public class SmartConnect {
 
 	/**
 	 * Retrieves RMS.
-	 * 
+	 *
 	 * @return Object of RMS.
 	 * @throws SmartAPIException is thrown for all Smart API trade related errors.
 	 * @throws JSONException     is thrown when there is exception while parsing
@@ -466,9 +477,9 @@ public class SmartConnect {
 
 	/**
 	 * Retrieves Holding.
-	 * 
+	 *
 	 * @return Object of Holding.
-	 * 
+	 *
 	 */
 	public JSONObject getHolding() {
 		try {
@@ -483,9 +494,9 @@ public class SmartConnect {
 
 	/**
 	 * Retrieves position.
-	 * 
+	 *
 	 * @return Object of position.
-	 * 
+	 *
 	 */
 	public JSONObject getPosition() {
 		try {
@@ -500,7 +511,7 @@ public class SmartConnect {
 
 	/**
 	 * Retrieves conversion.
-	 * 
+	 *
 	 * @return Object of conversion.
 	 * @throws SmartAPIException is thrown for all Smart API trade related errors.
 	 * @throws JSONException     is thrown when there is exception while parsing
@@ -520,10 +531,10 @@ public class SmartConnect {
 
 	/**
 	 * Create a Gtt Rule.
-	 * 
+	 *
 	 * @param gttParams is gtt Params.
 	 * @return Gtt contains only orderId.
-	 * 
+	 *
 	 */
 
 	public Gtt gttCreateRule(GttParams gttParams) {
@@ -567,10 +578,10 @@ public class SmartConnect {
 
 	/**
 	 * Modify a Gtt Rule.
-	 * 
+	 *
 	 * @param gttParams is gtt Params.
 	 * @return Gtt contains only orderId.
-	 * 
+	 *
 	 */
 
 	public Gtt gttModifyRule(Integer id, GttParams gttParams) {
@@ -610,7 +621,7 @@ public class SmartConnect {
 
 	/**
 	 * Cancel a Gtt Rule.
-	 * 
+	 *
 	 * @param gttParams is gtt Params.
 	 * @return Gtt contains only orderId.
 	 */
@@ -636,7 +647,7 @@ public class SmartConnect {
 
 	/**
 	 * Get Gtt Rule Details.
-	 * 
+	 *
 	 * @param id is gtt rule id.
 	 * @return returns the details of gtt rule.
 	 */
@@ -661,7 +672,7 @@ public class SmartConnect {
 
 	/**
 	 * Get Gtt Rule Details.
-	 * 
+	 *
 	 * @param status is list of gtt rule status.
 	 * @param page   is no of page
 	 * @param count  is the count of gtt rules
@@ -687,7 +698,7 @@ public class SmartConnect {
 
 	/**
 	 * Get Historic Data.
-	 * 
+	 *
 	 * @param params is historic data params.
 	 * @return returns the details of historic data.
 	 */
@@ -704,10 +715,58 @@ public class SmartConnect {
 	}
 
 	/**
+
+	 * Get Search Script Data.
+	 *
+	 * @param payload is Search Script params.
+	 * @return returns the details of Search Script data.
+	 */
+
+	public String getSearchScrip(JSONObject payload) throws SmartAPIException, IOException {
+		try {
+			String url = routes.get("api.search.script.data");
+			return smartAPIRequestHandler.postRequestJSONObject(this.apiKey, url, payload, accessToken);
+		}catch (IOException ex) {
+			log.error("{} while generating session {}", IO_EXCEPTION_OCCURRED, ex.getMessage());
+			throw new IOException(String.format("%s in generating Session  %s", IO_EXCEPTION_ERROR_MSG, ex.getMessage()));
+		} catch (JSONException ex) {
+			log.error("{} while generating session {}", JSON_EXCEPTION_OCCURRED, ex.getMessage());
+			throw new JSONException(String.format("%s in generating Session %s", JSON_EXCEPTION_ERROR_MSG, ex.getMessage()));
+		} catch (SmartAPIException ex) {
+			log.error("{} while generating session {}", SMART_API_EXCEPTION_OCCURRED, ex.toString());
+			throw new SmartAPIException(String.format("%s in generating Session %s", SMART_API_EXCEPTION_ERROR_MSG, ex));
+    }
+  }
+
+/**
+	 * Get Market Data.
+	 *
+	 * @param params is market data params.
+	 * @return returns the details of market data.
+	 */
+	public JSONObject marketData(JSONObject params) throws SmartAPIException, IOException {
+		try{
+			String url = routes.get("api.market.data");
+			JSONObject response = smartAPIRequestHandler.postRequest(this.apiKey, url, params, accessToken);
+			return response.getJSONObject("data");
+		}catch (SmartAPIException ex) {
+			log.error("{} while placing order {}", SMART_API_EXCEPTION_OCCURRED, ex.toString());
+			throw new SmartAPIException(String.format("%s in placing order %s", SMART_API_EXCEPTION_ERROR_MSG, ex));
+		} catch (IOException ex) {
+			log.error("{} while placing order {}", IO_EXCEPTION_OCCURRED, ex.getMessage());
+			throw new IOException(String.format("%s in placing order %s", IO_EXCEPTION_ERROR_MSG, ex.getMessage()));
+		} catch (JSONException ex) {
+			log.error("{} while placing order {}", JSON_EXCEPTION_OCCURRED, ex.getMessage());
+			throw new JSONException(String.format("%s in placing order %s", JSON_EXCEPTION_ERROR_MSG, ex.getMessage()));
+
+		}
+	}
+
+	/**
 	 * Logs out user by invalidating the access token.
-	 * 
+	 *
 	 * @return JSONObject which contains status
-	 * 
+	 *
 	 */
 
 	public JSONObject logout() {
@@ -722,5 +781,6 @@ public class SmartConnect {
 			return null;
 		}
 	}
-
+    
 }
+
