@@ -36,7 +36,7 @@ import static org.mockito.Mockito.when;
 @RunWith(MockitoJUnitRunner.Silent.class)
 @Slf4j
 public class SmartConnectTest {
-  
+    @Mock
     private SmartAPIRequestHandler smartAPIRequestHandler;
 
     @Mock
@@ -47,13 +47,13 @@ public class SmartConnectTest {
     private String apiKey;
     private String accessToken;
 
-    @Mock
-    private SmartConnect smartConnect;
 
     @Before
     public void setup() {
-        // Set up any necessary configurations or dependencies
+        apiKey = System.getProperty("apiKey");
+        accessToken = System.getenv("accessToken");
     }
+
 
     @Test
     public void testGetSearchScript_Success() throws SmartAPIException, IOException {
@@ -171,12 +171,6 @@ public class SmartConnectTest {
         jsonObject.put("status", true);
 
         return jsonObject;
-    }
-
-    @Before
-    public void setup() {
-        apiKey = System.getProperty("apiKey");
-        accessToken = System.getenv("accessToken");
     }
 
     // Testing market data success for Full payload
