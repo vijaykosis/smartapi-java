@@ -490,6 +490,7 @@ public class SmartConnect {
 		}
 	}
 
+
 	/**
 	 * Retrieves All Holdings.
 	 *
@@ -500,7 +501,7 @@ public class SmartConnect {
 		try {
 			String url = routes.get("api.order.rms.AllHolding");
 			return smartAPIRequestHandler.getRequest(this.apiKey, url, accessToken);
-		}catch (SmartAPIException ex) {
+		} catch (SmartAPIException ex) {
 			log.error("{} while placing order {}", SMART_API_EXCEPTION_OCCURRED, ex.toString());
 			throw new SmartAPIException(String.format("%s in placing order %s", SMART_API_EXCEPTION_ERROR_MSG, ex));
 		} catch (IOException ex) {
