@@ -15,6 +15,8 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+
+
 import java.io.IOException;
 import java.net.Proxy;
 import java.util.List;
@@ -736,6 +738,30 @@ public class SmartConnect {
 	}
 
 	/**
+
+	 * Get Search Script Data.
+	 *
+	 * @param payload is Search Script params.
+	 * @return returns the details of Search Script data.
+	 */
+
+	public String getSearchScrip(JSONObject payload) throws SmartAPIException, IOException {
+		try {
+			String url = routes.get("api.search.script.data");
+			return smartAPIRequestHandler.postRequestJSONObject(this.apiKey, url, payload, accessToken);
+		}catch (IOException ex) {
+			log.error("{} while generating session {}", IO_EXCEPTION_OCCURRED, ex.getMessage());
+			throw new IOException(String.format("%s in generating Session  %s", IO_EXCEPTION_ERROR_MSG, ex.getMessage()));
+		} catch (JSONException ex) {
+			log.error("{} while generating session {}", JSON_EXCEPTION_OCCURRED, ex.getMessage());
+			throw new JSONException(String.format("%s in generating Session %s", JSON_EXCEPTION_ERROR_MSG, ex.getMessage()));
+		} catch (SmartAPIException ex) {
+			log.error("{} while generating session {}", SMART_API_EXCEPTION_OCCURRED, ex.toString());
+			throw new SmartAPIException(String.format("%s in generating Session %s", SMART_API_EXCEPTION_ERROR_MSG, ex));
+    }
+  }
+
+/**
 	 * Get Market Data.
 	 *
 	 * @param params is market data params.
@@ -755,6 +781,7 @@ public class SmartConnect {
 		} catch (JSONException ex) {
 			log.error("{} while placing order {}", JSON_EXCEPTION_OCCURRED, ex.getMessage());
 			throw new JSONException(String.format("%s in placing order %s", JSON_EXCEPTION_ERROR_MSG, ex.getMessage()));
+
 		}
 	}
 
@@ -777,5 +804,6 @@ public class SmartConnect {
 			return null;
 		}
 	}
-
+    
 }
+
