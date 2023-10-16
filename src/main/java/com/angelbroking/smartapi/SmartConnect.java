@@ -502,14 +502,14 @@ public class SmartConnect {
 			String url = routes.get("api.order.rms.AllHolding");
 			return smartAPIRequestHandler.getRequest(this.apiKey, url, accessToken);
 		} catch (SmartAPIException ex) {
-			log.error("{} while placing order {}", SMART_API_EXCEPTION_OCCURRED, ex.toString());
-			throw new SmartAPIException(String.format("%s in placing order %s", SMART_API_EXCEPTION_ERROR_MSG, ex));
+			log.error("{} while getting all holdings {}", SMART_API_EXCEPTION_OCCURRED, ex.toString());
+			throw new SmartAPIException(String.format("%s in getting all holdings %s", SMART_API_EXCEPTION_ERROR_MSG, ex));
 		} catch (IOException ex) {
-			log.error("{} while placing order {}", IO_EXCEPTION_OCCURRED, ex.getMessage());
-			throw new IOException(String.format("%s in placing order %s", IO_EXCEPTION_ERROR_MSG, ex.getMessage()));
+			log.error("{} while getting all holdings {}", IO_EXCEPTION_OCCURRED, ex.getMessage());
+			throw new IOException(String.format("%s in getting all holdings %s", IO_EXCEPTION_ERROR_MSG, ex.getMessage()));
 		} catch (JSONException ex) {
-			log.error("{} while placing order {}", JSON_EXCEPTION_OCCURRED, ex.getMessage());
-			throw new JSONException(String.format("%s in placing order %s", JSON_EXCEPTION_ERROR_MSG, ex.getMessage()));
+			log.error("{} while getting all holdings {}", JSON_EXCEPTION_OCCURRED, ex.getMessage());
+			throw new JSONException(String.format("%s in getting all holdings %s", JSON_EXCEPTION_ERROR_MSG, ex.getMessage()));
 		}
 	}
 
