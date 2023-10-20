@@ -804,6 +804,22 @@ public class SmartConnect {
 			return null;
 		}
 	}
-    
+
+	/**
+	 * Get Individual Order Details
+	 *
+	 * @return JSONObject which contains order details from Smart API
+	 *
+	 */
+	public JSONObject getIndividualOrderDetails(String orderId) {
+		try {
+			String url = routes.get("api.individual.order").concat(orderId);
+			return smartAPIRequestHandler.getRequest(this.apiKey, url, accessToken);
+		} catch (SmartAPIException e) {
+            throw new RuntimeException(e);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
 }
 

@@ -101,6 +101,9 @@ public class Test {
 			/* System.out.println("logout"); */
 			examples.logout(smartConnect);
 
+			/* System.out.println("Individual Order"); */
+			examples.getIndividualOrder(smartConnect, "1000051");
+
 			/* SmartAPITicker */
 			String clientId = "<clientId>";
 			User user = smartConnect.generateSession("<clientId>", "<password>", "<totp>");

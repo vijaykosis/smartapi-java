@@ -47,6 +47,7 @@ public class Routes {
 				put("api.candle.data", "/rest/secure/angelbroking/historical/v1/getCandleData");
 				put("api.search.script.data", "/rest/secure/angelbroking/order/v1/searchScrip");
 				put("api.market.data", "/rest/secure/angelbroking/market/v1/quote");
+				put("api.individual.order", "/rest/secure/angelbroking/order/v1/details/");
 			}
 		};
 	}

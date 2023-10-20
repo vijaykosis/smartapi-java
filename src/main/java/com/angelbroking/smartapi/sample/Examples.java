@@ -84,7 +84,7 @@ public class Examples {
 
 		OrderParams orderParams = new OrderParams();
 		orderParams.variety = Constants.VARIETY_STOPLOSS;
-		orderParams.quantity = 323;
+		orderParams.quantity = 1;
 		orderParams.symboltoken = "1660";
 		orderParams.exchange = Constants.EXCHANGE_NSE;
 		orderParams.ordertype = Constants.ORDER_TYPE_STOPLOSS_LIMIT;
@@ -169,6 +169,7 @@ public class Examples {
 	public void getAllHolding(SmartConnect smartConnect) throws SmartAPIException, IOException {
 		// Returns All Holding.
 		JSONObject response = smartConnect.getAllHolding();
+		System.out.println(response);
 	}
 
 	/** Get Position */
@@ -414,4 +415,9 @@ public class Examples {
 		JSONObject jsonObject = smartConnect.logout();
 	}
 
+	/** Get Individual Order */
+	public void getIndividualOrder(SmartConnect smartConnect, String orderId) throws SmartAPIException, IOException {
+		JSONObject jsonObject = smartConnect.getIndividualOrderDetails(orderId);
+		System.out.println(jsonObject);
+	}
 }
