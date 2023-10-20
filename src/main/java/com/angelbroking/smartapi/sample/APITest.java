@@ -4,7 +4,7 @@ import com.angelbroking.smartapi.SmartConnect;
 import com.angelbroking.smartapi.http.exceptions.SmartAPIException;
 import com.angelbroking.smartapi.models.User;
 
-public class Test {
+public class APITest {
 
 	public static void main(String[] args) throws SmartAPIException {
 		try {
