@@ -34,6 +34,7 @@ public class Routes {
 				put("api.order.book", "/rest/secure/angelbroking/order/v1/getOrderBook");
 				put("api.order.trade.book", "/rest/secure/angelbroking/order/v1/getTradeBook");
 				put("api.order.rms.data", "/rest/secure/angelbroking/user/v1/getRMS");
+				put("api.order.rms.AllHolding", "/rest/secure/angelbroking/portfolio/v1/getAllHolding");
 				put("api.order.rms.holding", "/rest/secure/angelbroking/portfolio/v1/getHolding");
 				put("api.order.rms.position", "/rest/secure/angelbroking/order/v1/getPosition");
 				put("api.order.rms.position.convert", "/rest/secure/angelbroking/order/v1/convertPosition");
