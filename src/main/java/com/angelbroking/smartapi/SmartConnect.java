@@ -3,12 +3,7 @@ package com.angelbroking.smartapi;
 import com.angelbroking.smartapi.http.SessionExpiryHook;
 import com.angelbroking.smartapi.http.SmartAPIRequestHandler;
 import com.angelbroking.smartapi.http.exceptions.SmartAPIException;
-import com.angelbroking.smartapi.models.Gtt;
-import com.angelbroking.smartapi.models.GttParams;
-import com.angelbroking.smartapi.models.Order;
-import com.angelbroking.smartapi.models.OrderParams;
-import com.angelbroking.smartapi.models.TokenSet;
-import com.angelbroking.smartapi.models.User;
+import com.angelbroking.smartapi.models.*;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.codec.digest.DigestUtils;
 import org.json.JSONArray;
@@ -804,6 +799,37 @@ public class SmartConnect {
 			return null;
 		}
 	}
-    
+
+	/**
+	 * Get Margin Data.
+	 *
+	 * @param marginParams is margin data params.
+	 * @return returns the response of margin data.
+	 */
+	public JSONObject getMarginDetails(List<MarginParams> marginParams) {
+		try {
+			JSONArray positionsArray = new JSONArray();
+
+			for (MarginParams params : marginParams) {
+				JSONObject position = new JSONObject();
+				position.put("exchange", params.exchange!= null ? params.exchange : "");
+				position.put("qty", params.quantity!= null ? params.quantity : 0);
+				position.put("price", params.price!=null ? params.price : 0.0);
+				position.put("productType", params.productType!=null ? params.productType : "");
+				position.put("token", params.token!=null ? params.token : "");
+				position.put("tradeType", params.tradeType!=null ? params.tradeType : "");
+				positionsArray.put(position);
+			}
+
+			JSONObject requestBody = new JSONObject();
+			requestBody.put("positions", positionsArray);
+
+			String url = routes.get("api.margin.batch");
+			JSONObject response = smartAPIRequestHandler.postRequest(this.apiKey, url, requestBody, accessToken);
+			return response;
+		} catch (SmartAPIException | IOException e1) {
+            return null;
+        }
+    }
 }
 
