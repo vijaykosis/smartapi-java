@@ -2,6 +2,7 @@ package com.angelbroking.smartapi.http;
 
 import com.angelbroking.smartapi.SmartConnect;
 import com.angelbroking.smartapi.http.exceptions.SmartAPIException;
+import lombok.extern.slf4j.Slf4j;
 import okhttp3.FormBody;
 import okhttp3.HttpUrl;
 import okhttp3.MediaType;
@@ -28,6 +29,7 @@ import java.util.concurrent.TimeUnit;
 /**
  * Request handler for all Http requests
  */
+@Slf4j
 public class SmartAPIRequestHandler {
 
 	private OkHttpClient client;
@@ -103,10 +105,10 @@ public class SmartAPIRequestHandler {
 			String sourceID = "WEB";
 			headers.put("sourceID", sourceID);
 
-			System.out.print(headers);
+			log.info("headers : {}",headers);
 			return headers;
 		} catch (Exception e) {
-			System.out.println(e.getMessage());
+			log.error(e.getMessage());
 			return null;
 		}
 
@@ -315,8 +317,8 @@ public class SmartAPIRequestHandler {
 					.header("X-SourceID", apiheader.getString("sourceID")).build();
 			return request;
 		} catch (Exception e) {
-			System.out.println("exception createPostRequest");
-			System.out.println(e.getMessage());
+			log.error("exception createPostRequest");
+			log.error(e.getMessage());
 			return null;
 		}
 	}
@@ -348,7 +350,7 @@ public class SmartAPIRequestHandler {
 					.header("X-SourceID", apiheader.getString("sourceID")).build();
 			return request;
 		} catch (Exception e) {
-			System.out.println(e.getMessage());
+			log.error(e.getMessage());
 			return null;
 		}
 	}

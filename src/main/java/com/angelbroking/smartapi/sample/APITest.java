@@ -3,7 +3,9 @@ package com.angelbroking.smartapi.sample;
 import com.angelbroking.smartapi.SmartConnect;
 import com.angelbroking.smartapi.http.exceptions.SmartAPIException;
 import com.angelbroking.smartapi.models.User;
+import lombok.extern.slf4j.Slf4j;
 
+@Slf4j
 public class APITest {
 
 	public static void main(String[] args) throws SmartAPIException {
@@ -21,7 +23,7 @@ public class APITest {
 			 * SessionExpiryHook() {
 			 *
 			 * @Override public void sessionExpired() {
-			 * System.out.println("session expired"); } });
+			 * log.info("session expired"); } });
 			 *
 			 * User user = smartConnect.generateSession("<clientId>", "<password>");
 			 * smartConnect.setAccessToken(user.getAccessToken());
@@ -36,72 +38,72 @@ public class APITest {
 			 */
 
 			Examples examples = new Examples();
-			/* System.out.println("getProfile"); */
+			/* log.info("getProfile"); */
 			examples.getProfile(smartConnect);
 
-			/* System.out.println("placeOrder"); */
+			/* log.info("placeOrder"); */
 			examples.placeOrder(smartConnect);
 
-			/* System.out.println("modifyOrder"); */
+			/* log.info("modifyOrder"); */
 			examples.modifyOrder(smartConnect);
 
-			/* System.out.println("cancelOrder"); */
+			/* log.info("cancelOrder"); */
 			examples.cancelOrder(smartConnect);
 
-			/* System.out.println("getOrder"); */
+			/* log.info("getOrder"); */
 			examples.getOrder(smartConnect);
 
-			/* System.out.println("getLTP"); */
+			/* log.info("getLTP"); */
 			examples.getLTP(smartConnect);
 
-			/* System.out.println("getTrades"); */
+			/* log.info("getTrades"); */
 			examples.getTrades(smartConnect);
 
-			/* System.out.println("getRMS"); */
+			/* log.info("getRMS"); */
 			examples.getRMS(smartConnect);
 
-			/* System.out.println("getHolding"); */
+			/* log.info("getHolding"); */
 			examples.getHolding(smartConnect);
 
-			/* System.out.println("getAllHolding"); */
+			/* log.info("getAllHolding"); */
 			examples.getAllHolding(smartConnect);
 
-			/* System.out.println("getPosition"); */
+			/* log.info("getPosition"); */
 			examples.getPosition(smartConnect);
 
-			/* System.out.println("convertPosition"); */
+			/* log.info("convertPosition"); */
 			examples.convertPosition(smartConnect);
 
-			/* System.out.println("createRule"); */
+			/* log.info("createRule"); */
 			examples.createRule(smartConnect);
 
-			/* System.out.println("ModifyRule"); */
+			/* log.info("ModifyRule"); */
 			examples.modifyRule(smartConnect);
 
-			/* System.out.println("cancelRule"); */
+			/* log.info("cancelRule"); */
 			examples.cancelRule(smartConnect);
 
-			/* System.out.println("Rule Details"); */
+			/* log.info("Rule Details"); */
 			examples.ruleDetails(smartConnect);
 
-			/* System.out.println("Rule List"); */
+			/* log.info("Rule List"); */
 			examples.ruleList(smartConnect);
 
-			/* System.out.println("Historic candle Data"); */
+			/* log.info("Historic candle Data"); */
 			examples.getCandleData(smartConnect);
 
 
-			/* System.out.println("Search script api"); */
+			/* log.info("Search script api"); */
 			examples.getSearchScrip(smartConnect);
 
-			/* System.out.println("Market Data"); */
+			/* log.info("Market Data"); */
 			examples.getMarketData(smartConnect);
 
 
-			/* System.out.println("logout"); */
+			/* log.info("logout"); */
 			examples.logout(smartConnect);
 
-			/* System.out.println("Individual Order"); */
+			/* log.info("Individual Order"); */
 			examples.getIndividualOrder(smartConnect, "1000051");
 
 			/* SmartAPITicker */
@@ -123,7 +125,7 @@ public class APITest {
 			 */
 
 		} catch (Exception e) {
-			System.out.println("Exception: " + e.getMessage());
+			log.error("Exception: {}" , e.getMessage());
 			e.printStackTrace();
 		}
 

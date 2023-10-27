@@ -181,7 +181,7 @@ public class SmartConnect {
 
 			JSONObject loginResultObject = smartAPIRequestHandler.postRequest(this.apiKey, routes.getLoginUrl(),
 					params);
-			System.out.print(loginResultObject);
+			log.info("login result: {}",loginResultObject);
 			String jwtToken = loginResultObject.getJSONObject("data").getString("jwtToken");
 			String refreshToken = loginResultObject.getJSONObject("data").getString("refreshToken");
 			String feedToken = loginResultObject.getJSONObject("data").getString("feedToken");
@@ -193,7 +193,7 @@ public class SmartConnect {
 
 			return user;
 		} catch (Exception | SmartAPIException e) {
-			System.out.println(e.getMessage());
+			log.error(e.getMessage());
 			return null;
 		}
 
@@ -228,7 +228,7 @@ public class SmartConnect {
 
 			return tokenSet;
 		} catch (Exception | SmartAPIException e) {
-			System.out.println(e.getMessage());
+			log.error(e.getMessage());
 			return null;
 		}
 	}
@@ -259,7 +259,7 @@ public class SmartConnect {
 			User user = new User().parseResponse(smartAPIRequestHandler.getRequest(this.apiKey, url, accessToken));
 			return user;
 		} catch (Exception | SmartAPIException e) {
-			System.out.println(e.getMessage());
+			log.error(e.getMessage());
 			return null;
 		}
 	}
@@ -312,10 +312,10 @@ public class SmartConnect {
 			JSONObject jsonObject = smartAPIRequestHandler.postRequest(this.apiKey, url, params, accessToken);
 			Order order = new Order();
 			order.orderId = jsonObject.getJSONObject("data").getString("orderid");
-			System.out.println(order);
+			log.info("order : {}",order);
 			return order;
 		} catch (Exception | SmartAPIException e) {
-			System.out.println(e.getMessage());
+			log.error(e.getMessage());
 			return null;
 		}
 	}
@@ -361,7 +361,7 @@ public class SmartConnect {
 			order.orderId = jsonObject.getJSONObject("data").getString("orderid");
 			return order;
 		} catch (Exception | SmartAPIException e) {
-			System.out.println(e.getMessage());
+			log.error(e.getMessage());
 			return null;
 		}
 	}
@@ -387,7 +387,7 @@ public class SmartConnect {
 			order.orderId = jsonObject.getJSONObject("data").getString("orderid");
 			return order;
 		} catch (Exception | SmartAPIException e) {
-			System.out.println(e.getMessage());
+			log.error(e.getMessage());
 			return null;
 		}
 	}
@@ -405,10 +405,10 @@ public class SmartConnect {
 		try {
 			String url = routes.get("api.order.book");
 			JSONObject response = smartAPIRequestHandler.getRequest(this.apiKey, url, accessToken);
-			System.out.println(response);
+			log.info("Order history : {}",response);
 			return response;
 		} catch (Exception | SmartAPIException e) {
-			System.out.println("Exception#: " + e.getMessage());
+			log.error("Exception#: {}" , e.getMessage());
 			e.printStackTrace();
 			return null;
 		}
@@ -434,7 +434,7 @@ public class SmartConnect {
 
 			return response.getJSONObject("data");
 		} catch (Exception | SmartAPIException e) {
-			System.out.println(e.getMessage());
+			log.error(e.getMessage());
 			return null;
 		}
 	}
@@ -450,7 +450,7 @@ public class SmartConnect {
 			JSONObject response = smartAPIRequestHandler.getRequest(this.apiKey, url, accessToken);
 			return response;
 		} catch (Exception | SmartAPIException e) {
-			System.out.println(e.getMessage());
+			log.error(e.getMessage());
 			return null;
 		}
 	}
@@ -470,7 +470,7 @@ public class SmartConnect {
 			JSONObject response = smartAPIRequestHandler.getRequest(this.apiKey, url, accessToken);
 			return response.getJSONObject("data");
 		} catch (Exception | SmartAPIException e) {
-			System.out.println(e.getMessage());
+			log.error(e.getMessage());
 			return null;
 		}
 	}
@@ -487,7 +487,7 @@ public class SmartConnect {
 			JSONObject response = smartAPIRequestHandler.getRequest(this.apiKey, url, accessToken);
 			return response;
 		} catch (Exception | SmartAPIException e) {
-			System.out.println(e.getMessage());
+			log.error(e.getMessage());
 			return null;
 		}
 	}
@@ -527,7 +527,7 @@ public class SmartConnect {
 			JSONObject response = smartAPIRequestHandler.getRequest(this.apiKey, url, accessToken);
 			return response;
 		} catch (Exception | SmartAPIException e) {
-			System.out.println(e.getMessage());
+			log.error(e.getMessage());
 			return null;
 		}
 	}
@@ -547,7 +547,7 @@ public class SmartConnect {
 			JSONObject response = smartAPIRequestHandler.postRequest(this.apiKey, url, params, accessToken);
 			return response;
 		} catch (Exception | SmartAPIException e) {
-			System.out.println(e.getMessage());
+			log.error(e.getMessage());
 			return null;
 		}
 	}
@@ -590,10 +590,10 @@ public class SmartConnect {
 			JSONObject jsonObject = smartAPIRequestHandler.postRequest(this.apiKey, url, params, accessToken);
 			Gtt gtt = new Gtt();
 			gtt.id = jsonObject.getJSONObject("data").getInt("id");
-			System.out.println(gtt);
+			log.info("gtt : {}",gtt);
 			return gtt;
 		} catch (Exception | SmartAPIException e) {
-			System.out.println(e.getMessage());
+			log.error(e.getMessage());
 			return null;
 		}
 
@@ -633,10 +633,10 @@ public class SmartConnect {
 			JSONObject jsonObject = smartAPIRequestHandler.postRequest(this.apiKey, url, params, accessToken);
 			Gtt gtt = new Gtt();
 			gtt.id = jsonObject.getJSONObject("data").getInt("id");
-			System.out.println(gtt);
+			log.info("gtt : {}",gtt);
 			return gtt;
 		} catch (Exception | SmartAPIException e) {
-			System.out.println(e.getMessage());
+			log.error(e.getMessage());
 			return null;
 		}
 
@@ -660,10 +660,10 @@ public class SmartConnect {
 			JSONObject jsonObject = smartAPIRequestHandler.postRequest(this.apiKey, url, params, accessToken);
 			Gtt gtt = new Gtt();
 			gtt.id = jsonObject.getJSONObject("data").getInt("id");
-			System.out.println(gtt);
+			log.info("gtt : {}",gtt);
 			return gtt;
 		} catch (Exception | SmartAPIException e) {
-			System.out.println(e.getMessage());
+			log.error(e.getMessage());
 			return null;
 		}
 	}
@@ -683,11 +683,11 @@ public class SmartConnect {
 
 			String url = routes.get("api.gtt.details");
 			JSONObject response = smartAPIRequestHandler.postRequest(this.apiKey, url, params, accessToken);
-			System.out.println(response);
+			log.info("response : {}",response);
 
 			return response.getJSONObject("data");
 		} catch (Exception | SmartAPIException e) {
-			System.out.println(e.getMessage());
+			log.error(e.getMessage());
 			return null;
 		}
 
@@ -710,10 +710,10 @@ public class SmartConnect {
 
 			String url = routes.get("api.gtt.list");
 			JSONObject response = smartAPIRequestHandler.postRequest(this.apiKey, url, params, accessToken);
-			System.out.println(response);
+			log.info("response : {}",response);
 			return response.getJSONArray("data");
 		} catch (Exception | SmartAPIException e) {
-			System.out.println(e.getMessage());
+			log.error(e.getMessage());
 			return null;
 		}
 
@@ -729,10 +729,10 @@ public class SmartConnect {
 		try {
 			String url = routes.get("api.candle.data");
 			JSONObject response = smartAPIRequestHandler.postRequest(this.apiKey, url, params, accessToken);
-			System.out.println(response);
+			log.info("response : {}",response);
 			return response.getString("data");
 		} catch (Exception | SmartAPIException e) {
-			System.out.println(e.getMessage());
+			log.error(e.getMessage());
 			return null;
 		}
 	}
@@ -800,7 +800,7 @@ public class SmartConnect {
 			JSONObject response = smartAPIRequestHandler.postRequest(this.apiKey, url, params, accessToken);
 			return response;
 		} catch (Exception | SmartAPIException e) {
-			System.out.println(e.getMessage());
+			log.error(e.getMessage());
 			return null;
 		}
 	}

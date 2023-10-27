@@ -99,7 +99,7 @@ public class Examples {
 		orderParams.triggerprice = "209";
 
 		Order order = smartConnect.placeOrder(orderParams, "STOPLOSS");
-		System.out.print(order);
+		log.info("order : {}",order);
 	}
 
 	/** Modify order. */
@@ -131,10 +131,7 @@ public class Examples {
 	/** Get order details */
 	public void getOrder(SmartConnect smartConnect) throws SmartAPIException, IOException {
 		JSONObject orders = smartConnect.getOrderHistory(smartConnect.getUserId());
-		System.out.print(orders);
-//		for (int i = 0; i < orders.size(); i++) {
-//			System.out.println(orders.get(i).orderId + " " + orders.get(i).status);
-//		}
+		log.info("orders {} ",orders);
 	}
 
 	/**
@@ -172,7 +169,7 @@ public class Examples {
 	public void getAllHolding(SmartConnect smartConnect) throws SmartAPIException, IOException {
 		// Returns All Holding.
 		JSONObject response = smartConnect.getAllHolding();
-		System.out.println(response);
+		log.info("response : " , response);
 	}
 
 	/** Get Position */
@@ -320,7 +317,7 @@ public class Examples {
 		tickerProvider.setOnConnectedListener(new OnConnect() {
 			@Override
 			public void onConnected() {
-				System.out.println("subscribe() called!");
+				log.info("subscribe() called!");
 				tickerProvider.subscribe();
 			}
 		});
@@ -328,7 +325,7 @@ public class Examples {
 		tickerProvider.setOnTickerArrivalListener(new OnTicks() {
 			@Override
 			public void onTicks(JSONArray ticks) {
-				System.out.println("ticker data: " + ticks.toString());
+				log.info("ticker data: " + ticks.toString());
 			}
 		});
 
@@ -342,7 +339,7 @@ public class Examples {
 		 * method.
 		 */
 		boolean isConnected = tickerProvider.isConnectionOpen();
-		System.out.println(isConnected);
+		log.info("is connected {} ",isConnected);
 
 		// After using SmartAPI ticker, close websocket connection.
 		// tickerProvider.disconnect();
@@ -366,7 +363,7 @@ public class Examples {
 		smartWebsocket.setOnDisconnectedListener(new SmartWSOnDisconnect() {
 			@Override
 			public void onDisconnected() {
-				System.out.println("onDisconnected");
+				log.info("onDisconnected");
 			}
 		});
 
@@ -374,24 +371,24 @@ public class Examples {
 		smartWebsocket.setOnErrorListener(new SmartWSOnError() {
 			@Override
 			public void onError(Exception exception) {
-				System.out.println("onError: " + exception.getMessage());
+				log.info("onError: " + exception.getMessage());
 			}
 
 			@Override
 			public void onError(SmartAPIException smartAPIException) {
-				System.out.println("onError: " + smartAPIException.getMessage());
+				log.info("onError: " + smartAPIException.getMessage());
 			}
 
 			@Override
 			public void onError(String error) {
-				System.out.println("onError: " + error);
+				log.info("onError: " + error);
 			}
 		});
 
 		smartWebsocket.setOnTickerArrivalListener(new SmartWSOnTicks() {
 			@Override
 			public void onTicks(JSONArray ticks) {
-				System.out.println("ticker data: " + ticks.toString());
+				log.info("ticker data: " + ticks.toString());
 			}
 		});
 
@@ -405,7 +402,7 @@ public class Examples {
 		 * method.
 		 */
 		boolean isConnected = smartWebsocket.isConnectionOpen();
-		System.out.println(isConnected);
+		log.info("is connected {}",isConnected);
 
 		// After using SmartAPI ticker, close websocket connection.
 		// smartWebsocket.disconnect();
