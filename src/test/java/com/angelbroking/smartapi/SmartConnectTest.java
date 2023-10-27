@@ -18,6 +18,7 @@ import java.io.IOException;
 
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.fail;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -319,5 +320,18 @@ public class SmartConnectTest {
         return payload;
     }
 
+    @Test
+    public void test_IndividualOrderIdDetails() {
+        SmartConnect smartConnect = new SmartConnect();
+        String orderId = "validOrderId";
+
+        JSONObject result = null;
+        try {
+            result = smartConnect.getIndividualOrderDetails(orderId);
+        } catch (IOException | SmartAPIException e) {
+            fail("Exception should not be thrown");
+        }
+        assertNotNull(result);
+    }
 }
 

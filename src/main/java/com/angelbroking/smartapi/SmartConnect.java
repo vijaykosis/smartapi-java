@@ -811,15 +811,21 @@ public class SmartConnect {
 	 * @return JSONObject which contains order details from Smart API
 	 *
 	 */
-	public JSONObject getIndividualOrderDetails(String orderId) {
+	public JSONObject getIndividualOrderDetails(String orderId) throws IOException, SmartAPIException {
 		try {
 			String url = routes.get("api.individual.order").concat(orderId);
 			return smartAPIRequestHandler.getRequest(this.apiKey, url, accessToken);
-		} catch (SmartAPIException e) {
-            throw new RuntimeException(e);
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
+		}catch (SmartAPIException ex) {
+			log.error("{} while fetching margin{}", SMART_API_EXCEPTION_OCCURRED, ex.toString());
+			throw new SmartAPIException(String.format("%s in fetching margin %s", SMART_API_EXCEPTION_ERROR_MSG, ex));
+		} catch (IOException ex) {
+			log.error("{} while fetching margin {}", IO_EXCEPTION_OCCURRED, ex.getMessage());
+			throw new IOException(String.format("%s in fetching margin %s", IO_EXCEPTION_ERROR_MSG, ex.getMessage()));
+		} catch (JSONException ex) {
+			log.error("{} while fetching margin {}", JSON_EXCEPTION_OCCURRED, ex.getMessage());
+			throw new JSONException(String.format("%s in fetching margin %s", JSON_EXCEPTION_ERROR_MSG, ex.getMessage()));
+
+		}
     }
 }
 
