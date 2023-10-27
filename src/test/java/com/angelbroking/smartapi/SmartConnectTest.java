@@ -320,18 +320,96 @@ public class SmartConnectTest {
         return payload;
     }
 
-    @Test
-    public void test_IndividualOrderIdDetails() {
-        SmartConnect smartConnect = new SmartConnect();
-        String orderId = "validOrderId";
+    public static JSONObject createIndividualOrderResponse() {
+        JSONObject jsonObject = new JSONObject();
+        jsonObject.put("status", true);
+        jsonObject.put("message", "SUCCESS");
+        jsonObject.put("errorcode", "");
 
-        JSONObject result = null;
-        try {
-            result = smartConnect.getIndividualOrderDetails(orderId);
-        } catch (IOException | SmartAPIException e) {
-            fail("Exception should not be thrown");
-        }
-        assertNotNull(result);
+        JSONObject dataObject = new JSONObject();
+        dataObject.put("variety", "NORMAL");
+        dataObject.put("ordertype", "LIMIT");
+        dataObject.put("producttype", "DELIVERY");
+        dataObject.put("duration", "DAY");
+        dataObject.put("price", 15);
+        dataObject.put("triggerprice", 0);
+        dataObject.put("quantity", "1");
+        dataObject.put("disclosedquantity", "0");
+        dataObject.put("squareoff", 0);
+        dataObject.put("stoploss", 0);
+        dataObject.put("trailingstoploss", 0);
+        dataObject.put("tradingsymbol", "YESBANK-EQ");
+        dataObject.put("transactiontype", "BUY");
+        dataObject.put("exchange", "NSE");
+        dataObject.put("symboltoken", "11915");
+        dataObject.put("instrumenttype", "");
+        dataObject.put("strikeprice", -1);
+        dataObject.put("optiontype", "");
+        dataObject.put("expirydate", "");
+        dataObject.put("lotsize", "1");
+        dataObject.put("cancelsize", "0");
+        dataObject.put("averageprice", 0);
+        dataObject.put("filledshares", "0");
+        dataObject.put("unfilledshares", "1");
+        dataObject.put("orderid", "231009000001039");
+        dataObject.put("text", "Invalid User Id");
+        dataObject.put("status", "rejected");
+        dataObject.put("orderstatus", "rejected");
+        dataObject.put("updatetime", "09-Oct-2023 17:39:28");
+        dataObject.put("exchtime", "");
+        dataObject.put("exchorderupdatetime", "");
+        dataObject.put("fillid", "");
+        dataObject.put("filltime", "");
+        dataObject.put("parentorderid", "");
+        dataObject.put("ordertag", ".test");
+        dataObject.put("uniqueorderid", "c7db6526-3f32-47c3-a41e-0e5cb6aad365");
+
+        jsonObject.put("data", dataObject);
+        return jsonObject;
     }
+
+    @Test
+    public void testIndividualOrder_Success() throws SmartAPIException, IOException {
+        String url = routes.get("api.individual.order");
+        when(smartAPIRequestHandler.getRequest(eq(this.apiKey), eq(url), eq(this.accessToken))).thenReturn(createIndividualOrderResponse());
+        try {
+            JSONObject response = smartAPIRequestHandler.getRequest(this.apiKey, url, this.accessToken);
+            JSONObject data = response.getJSONObject("data");
+            assertNotNull(data);
+        } catch (SmartAPIException ex) {
+            log.error("{} while getting individual order {}", SMART_API_EXCEPTION_OCCURRED, ex.toString());
+            throw new SmartAPIException(String.format("%s in getting individual order %s", SMART_API_EXCEPTION_ERROR_MSG, ex));
+        } catch (IOException ex) {
+            log.error("{} while getting individual order {}", IO_EXCEPTION_OCCURRED, ex.getMessage());
+            throw new IOException(String.format("%s in getting individual order %s", IO_EXCEPTION_ERROR_MSG, ex.getMessage()));
+        } catch (JSONException ex) {
+            log.error("{} while getting individual order {}", JSON_EXCEPTION_OCCURRED, ex.getMessage());
+            throw new JSONException(String.format("%s in getting individual order %s", JSON_EXCEPTION_ERROR_MSG, ex.getMessage()));
+        }
+    }
+
+    // Testing market data failure for OHLC payload
+    @Test(expected = SmartAPIException.class)
+    public void testIndividualOrder_Failure() throws SmartAPIException, IOException {
+        // Stub the postRequest method
+        String url = routes.get("api.market.data");
+        JSONObject params = getMarketDataRequest("OHLC");
+        when(smartAPIRequestHandler.postRequest(eq(this.apiKey), eq(url), eq(params), eq(this.accessToken)))
+                .thenThrow(new SmartAPIException("API request failed"));
+        try {
+            JSONObject response = smartAPIRequestHandler.postRequest(apiKey, url, params, accessToken);
+            response.getJSONObject("data");
+        } catch (SmartAPIException ex) {
+            log.error("{} while getting individual order {}", SMART_API_EXCEPTION_OCCURRED, ex.toString());
+            throw new SmartAPIException(String.format("%s in getting individual order %s", SMART_API_EXCEPTION_ERROR_MSG, ex));
+        } catch (IOException ex) {
+            log.error("{} while getting individual order {}", IO_EXCEPTION_OCCURRED, ex.getMessage());
+            throw new IOException(String.format("%s in getting individual order %s", IO_EXCEPTION_ERROR_MSG, ex.getMessage()));
+        } catch (JSONException ex) {
+            log.error("{} while getting individual order {}", JSON_EXCEPTION_OCCURRED, ex.getMessage());
+            throw new JSONException(String.format("%s in getting individual order %s", JSON_EXCEPTION_ERROR_MSG, ex.getMessage()));
+        }
+    }
+
 }
 

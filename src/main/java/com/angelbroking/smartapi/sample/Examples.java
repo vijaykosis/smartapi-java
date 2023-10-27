@@ -16,6 +16,7 @@ import com.angelbroking.smartapi.ticker.OnConnect;
 import com.angelbroking.smartapi.ticker.OnTicks;
 import com.angelbroking.smartapi.ticker.SmartAPITicker;
 import com.angelbroking.smartapi.utils.Constants;
+import lombok.extern.slf4j.Slf4j;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
@@ -24,6 +25,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 @SuppressWarnings("unused")
+@Slf4j
+
 public class Examples {
 
 	public void getProfile(SmartConnect smartConnect) throws IOException, SmartAPIException {
@@ -418,6 +421,6 @@ public class Examples {
 	/** Get Individual Order */
 	public void getIndividualOrder(SmartConnect smartConnect, String orderId) throws SmartAPIException, IOException {
 		JSONObject jsonObject = smartConnect.getIndividualOrderDetails(orderId);
-		System.out.println(jsonObject);
+		log.info("response {} ", jsonObject);
 	}
 }
