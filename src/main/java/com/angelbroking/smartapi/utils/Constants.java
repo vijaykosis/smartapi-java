@@ -101,4 +101,10 @@ public class Constants {
     public static final String TOKEN_EXCEPTION_MESSAGE = "Unauthorized access. Please provide a valid or non-expired jwtToken.";
     public static final String APIKEY_EXCEPTION_MESSAGE = "Invalid or missing api key. Please provide a valid api key.";
 
+    /** Margin data */
+
+    public static final String TRADETYPE_BUY = "BUY";
+
+    public static final String TRADETYPE_SELL = "SELL";
+
 }
