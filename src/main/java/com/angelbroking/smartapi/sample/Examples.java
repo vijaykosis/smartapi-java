@@ -2,11 +2,7 @@ package com.angelbroking.smartapi.sample;
 
 import com.angelbroking.smartapi.SmartConnect;
 import com.angelbroking.smartapi.http.exceptions.SmartAPIException;
-import com.angelbroking.smartapi.models.Gtt;
-import com.angelbroking.smartapi.models.GttParams;
-import com.angelbroking.smartapi.models.Order;
-import com.angelbroking.smartapi.models.OrderParams;
-import com.angelbroking.smartapi.models.User;
+import com.angelbroking.smartapi.models.*;
 import com.angelbroking.smartapi.smartTicker.SmartWSOnConnect;
 import com.angelbroking.smartapi.smartTicker.SmartWSOnDisconnect;
 import com.angelbroking.smartapi.smartTicker.SmartWSOnError;
@@ -414,4 +410,19 @@ public class Examples {
 		JSONObject jsonObject = smartConnect.logout();
 	}
 
+	/** Margin data. */
+	public void getMarginDetails(SmartConnect smartConnect) throws SmartAPIException, IOException {
+		List<MarginParams> marginParamsList = new ArrayList<>();
+		MarginParams marginParams = new MarginParams();
+		marginParams.quantity = 1;
+		marginParams.token = "12740";
+		marginParams.exchange = Constants.EXCHANGE_NSE;
+		marginParams.productType = Constants.PRODUCT_DELIVERY;
+		marginParams.price = 0.0;
+		marginParams.tradeType = Constants.TRADETYPE_BUY;
+
+		marginParamsList.add(marginParams);
+		JSONObject jsonObject = smartConnect.getMarginDetails(marginParamsList);
+		System.out.println(jsonObject);
+	}
 }
