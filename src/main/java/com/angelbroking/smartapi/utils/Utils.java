@@ -9,6 +9,10 @@ public class Utils {
 		return cs == null || cs.length() == 0;
 	}
 
+	public static boolean isEmpty(final Number nm) {
+		return nm == null || nm.equals(0);
+	}
+
 	public static boolean isNotEmpty(final CharSequence cs) {
 		return !isEmpty(cs);
 	}

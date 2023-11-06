@@ -177,8 +177,6 @@
             <artifactId>logback-classic</artifactId>
             <version>${logback-classic.version}</version>
         </dependency>
-
-
     </dependencies>
 	
 	<build>

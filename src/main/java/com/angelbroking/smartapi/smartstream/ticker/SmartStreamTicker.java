@@ -30,7 +30,10 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 public class SmartStreamTicker {
 
-	private static final int PING_INTERVAL = 10000; // 10 seconds
+	private static int PING_INTERVAL = 10000; // 10 seconds
+
+	private static int DELAY = 5000;
+	private static int PERIOD = 5000;
 	private static final String CLIENT_ID_HEADER = "x-client-code";
 	private static final String FEED_TOKEN_HEADER = "x-feed-token";
 	private static final String CLIENT_LIB_HEADER = "x-client-lib";
@@ -65,6 +68,30 @@ public class SmartStreamTicker {
         init();
     }
 
+	/**
+	 * Initializes the SmartStreamTicker.
+	 *
+	 * @param clientId            - the client ID used for authentication
+	 * @param feedToken           - the feed token used for authentication
+	 * @param delay               - delay in milliseconds
+	 * @param period              - period in milliseconds
+	 * @param smartStreamListener - the SmartStreamListener for receiving callbacks
+	 * @throws IllegalArgumentException - if the clientId, feedToken, or SmartStreamListener is null or empty
+	 */
+	public SmartStreamTicker(String clientId, String feedToken, SmartStreamListener smartStreamListener, Integer delay, Integer period ) {
+		if (Utils.isEmpty(clientId) || Utils.isEmpty(feedToken) || Utils.isEmpty(delay) || Utils.isEmpty(period) ||  Utils.validateInputNullCheck(smartStreamListener)) {
+			throw new IllegalArgumentException(
+					"clientId, feedToken and SmartStreamListener should not be empty or null");
+		}
+		this.DELAY = delay;
+		this.PERIOD = period;
+		this.clientId = clientId;
+		this.feedToken = feedToken;
+		this.smartStreamListener = smartStreamListener;
+		init();
+	}
+
+
 	private void init() {
 		try {
 			ws = new WebSocketFactory()
@@ -81,6 +108,7 @@ public class SmartStreamTicker {
 			}
 		}
 	}
+
 
 	private SmartStreamError getErrorHolder(Throwable e) {
 		SmartStreamError error = new SmartStreamError();
@@ -210,7 +238,7 @@ public class SmartStreamTicker {
                     smartStreamListener.onError(getErrorHolder(e));
                 }
             }
-        }, 5000, 5000); // run at every 5 second
+        }, DELAY, PERIOD); // run at every 5 second
     }
 
     private void stopPingTimer() {
