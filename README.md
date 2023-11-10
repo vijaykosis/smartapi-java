@@ -337,11 +337,12 @@ SmartAPI is a set of REST-like APIs that expose many capabilities required to bu
 
         }
 
-/** Logout user. */
+        /** Logout user. */
 	public void logout(SmartConnect smartConnect) throws SmartAPIException, IOException {
 		/** Logout user and kill the session. */
 		JSONObject jsonObject = smartConnect.logout();
 	}
+
 
 /** Margin data. */
 public void getMarginDetails(SmartConnect smartConnect) throws SmartAPIException, IOException {
@@ -358,6 +359,14 @@ public void getMarginDetails(SmartConnect smartConnect) throws SmartAPIException
         JSONObject jsonObject = smartConnect.getMarginDetails(marginParamsList);
         System.out.println(jsonObject);
         }
+
+        /** Get Individual Order */
+        public void getIndividualOrder(SmartConnect smartConnect, String orderId) throws SmartAPIException, IOException {
+            
+                JSONObject jsonObject = smartConnect.getIndividualOrderDetails(orderId);
+        }
+}
+
 ```
 For more details, take a look at Examples.java in the sample directory.
 

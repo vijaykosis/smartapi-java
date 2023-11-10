@@ -12,6 +12,7 @@ import com.angelbroking.smartapi.ticker.OnConnect;
 import com.angelbroking.smartapi.ticker.OnTicks;
 import com.angelbroking.smartapi.ticker.SmartAPITicker;
 import com.angelbroking.smartapi.utils.Constants;
+import lombok.extern.slf4j.Slf4j;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
@@ -20,6 +21,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 @SuppressWarnings("unused")
+@Slf4j
+
 public class Examples {
 
 	public void getProfile(SmartConnect smartConnect) throws IOException, SmartAPIException {
@@ -80,7 +83,7 @@ public class Examples {
 
 		OrderParams orderParams = new OrderParams();
 		orderParams.variety = Constants.VARIETY_STOPLOSS;
-		orderParams.quantity = 323;
+		orderParams.quantity = 1;
 		orderParams.symboltoken = "1660";
 		orderParams.exchange = Constants.EXCHANGE_NSE;
 		orderParams.ordertype = Constants.ORDER_TYPE_STOPLOSS_LIMIT;
@@ -92,7 +95,7 @@ public class Examples {
 		orderParams.triggerprice = "209";
 
 		Order order = smartConnect.placeOrder(orderParams, "STOPLOSS");
-		System.out.print(order);
+		log.info("order : {}",order);
 	}
 
 	/** Modify order. */
@@ -124,10 +127,7 @@ public class Examples {
 	/** Get order details */
 	public void getOrder(SmartConnect smartConnect) throws SmartAPIException, IOException {
 		JSONObject orders = smartConnect.getOrderHistory(smartConnect.getUserId());
-		System.out.print(orders);
-//		for (int i = 0; i < orders.size(); i++) {
-//			System.out.println(orders.get(i).orderId + " " + orders.get(i).status);
-//		}
+		log.info("orders {} ",orders);
 	}
 
 	/**
@@ -165,6 +165,7 @@ public class Examples {
 	public void getAllHolding(SmartConnect smartConnect) throws SmartAPIException, IOException {
 		// Returns All Holding.
 		JSONObject response = smartConnect.getAllHolding();
+		log.info("response : " , response);
 	}
 
 	/** Get Position */
@@ -312,7 +313,7 @@ public class Examples {
 		tickerProvider.setOnConnectedListener(new OnConnect() {
 			@Override
 			public void onConnected() {
-				System.out.println("subscribe() called!");
+				log.info("subscribe() called!");
 				tickerProvider.subscribe();
 			}
 		});
@@ -320,7 +321,7 @@ public class Examples {
 		tickerProvider.setOnTickerArrivalListener(new OnTicks() {
 			@Override
 			public void onTicks(JSONArray ticks) {
-				System.out.println("ticker data: " + ticks.toString());
+				log.info("ticker data: " + ticks.toString());
 			}
 		});
 
@@ -334,7 +335,7 @@ public class Examples {
 		 * method.
 		 */
 		boolean isConnected = tickerProvider.isConnectionOpen();
-		System.out.println(isConnected);
+		log.info("is connected {} ",isConnected);
 
 		// After using SmartAPI ticker, close websocket connection.
 		// tickerProvider.disconnect();
@@ -358,7 +359,7 @@ public class Examples {
 		smartWebsocket.setOnDisconnectedListener(new SmartWSOnDisconnect() {
 			@Override
 			public void onDisconnected() {
-				System.out.println("onDisconnected");
+				log.info("onDisconnected");
 			}
 		});
 
@@ -366,24 +367,24 @@ public class Examples {
 		smartWebsocket.setOnErrorListener(new SmartWSOnError() {
 			@Override
 			public void onError(Exception exception) {
-				System.out.println("onError: " + exception.getMessage());
+				log.info("onError: " + exception.getMessage());
 			}
 
 			@Override
 			public void onError(SmartAPIException smartAPIException) {
-				System.out.println("onError: " + smartAPIException.getMessage());
+				log.info("onError: " + smartAPIException.getMessage());
 			}
 
 			@Override
 			public void onError(String error) {
-				System.out.println("onError: " + error);
+				log.info("onError: " + error);
 			}
 		});
 
 		smartWebsocket.setOnTickerArrivalListener(new SmartWSOnTicks() {
 			@Override
 			public void onTicks(JSONArray ticks) {
-				System.out.println("ticker data: " + ticks.toString());
+				log.info("ticker data: " + ticks.toString());
 			}
 		});
 
@@ -397,7 +398,7 @@ public class Examples {
 		 * method.
 		 */
 		boolean isConnected = smartWebsocket.isConnectionOpen();
-		System.out.println(isConnected);
+		log.info("is connected {}",isConnected);
 
 		// After using SmartAPI ticker, close websocket connection.
 		// smartWebsocket.disconnect();
@@ -409,6 +410,7 @@ public class Examples {
 		/** Logout user and kill session. */
 		JSONObject jsonObject = smartConnect.logout();
 	}
+
 
 	/** Margin data. */
 	public void getMarginDetails(SmartConnect smartConnect) throws SmartAPIException, IOException {
@@ -423,6 +425,13 @@ public class Examples {
 
 		marginParamsList.add(marginParams);
 		JSONObject jsonObject = smartConnect.getMarginDetails(marginParamsList);
-		System.out.println(jsonObject);
+		log.info("response {} ", jsonObject);
+
+	}
+
+	/** Get Individual Order */
+	public void getIndividualOrder(SmartConnect smartConnect, String orderId) throws SmartAPIException, IOException {
+		JSONObject jsonObject = smartConnect.getIndividualOrderDetails(orderId);
+		log.info("response {} ", jsonObject);
 	}
 }
