@@ -5,15 +5,15 @@ public class Utils {
 		
 	}
 
-	public static boolean isEmpty(final CharSequence cs) {
+	public static boolean isEmpty(final String cs) {
 		return cs == null || cs.length() == 0;
 	}
 
-	public static boolean isEmpty(final Number nm) {
+	public static boolean isEmpty(final Integer nm) {
 		return nm == null || nm.equals(0);
 	}
 
-	public static boolean isNotEmpty(final CharSequence cs) {
+	public static boolean isNotEmpty(final Integer cs) {
 		return !isEmpty(cs);
 	}
 
