@@ -3,12 +3,7 @@ package com.angelbroking.smartapi;
 import com.angelbroking.smartapi.http.SessionExpiryHook;
 import com.angelbroking.smartapi.http.SmartAPIRequestHandler;
 import com.angelbroking.smartapi.http.exceptions.SmartAPIException;
-import com.angelbroking.smartapi.models.Gtt;
-import com.angelbroking.smartapi.models.GttParams;
-import com.angelbroking.smartapi.models.Order;
-import com.angelbroking.smartapi.models.OrderParams;
-import com.angelbroking.smartapi.models.TokenSet;
-import com.angelbroking.smartapi.models.User;
+import com.angelbroking.smartapi.models.*;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.codec.digest.DigestUtils;
 import org.json.JSONArray;
@@ -804,6 +799,45 @@ public class SmartConnect {
 			return null;
 		}
 	}
-    
+
+	/**
+	 * Get Margin Data.
+	 *
+	 * @param marginParams is margin data params.
+	 * @return returns the response of margin data.
+	 */
+	public JSONObject getMarginDetails(List<MarginParams> marginParams) throws IOException, SmartAPIException {
+		try {
+			JSONArray positionsArray = new JSONArray();
+
+			for (MarginParams params : marginParams) {
+				JSONObject position = new JSONObject();
+				position.put("exchange",  params.exchange);
+				position.put("qty",params.quantity);
+				position.put("price",  params.price );
+				position.put("productType",  params.productType);
+				position.put("token", params.token );
+				position.put("tradeType",  params.tradeType);
+				positionsArray.put(position);
+			}
+
+			JSONObject requestBody = new JSONObject();
+			requestBody.put("positions", positionsArray);
+
+			String url = routes.get("api.margin.batch");
+			JSONObject response = smartAPIRequestHandler.postRequest(this.apiKey, url, requestBody, accessToken);
+			return response;
+		}catch (SmartAPIException ex) {
+			log.error("{} while fetching margin data {}", SMART_API_EXCEPTION_OCCURRED, ex.toString());
+			throw new SmartAPIException(String.format("%s  while fetching margin data %s", SMART_API_EXCEPTION_ERROR_MSG, ex));
+		} catch (IOException ex) {
+			log.error("{}  while fetching margin data {}", IO_EXCEPTION_OCCURRED, ex.getMessage());
+			throw new IOException(String.format("%s  while fetching margin data %s", IO_EXCEPTION_ERROR_MSG, ex.getMessage()));
+		} catch (JSONException ex) {
+			log.error("{}  while fetching margin data {}", JSON_EXCEPTION_OCCURRED, ex.getMessage());
+			throw new JSONException(String.format("%s  while fetching margin data %s", JSON_EXCEPTION_ERROR_MSG, ex.getMessage()));
+
+		}
+    }
 }
 

@@ -3,6 +3,8 @@ package com.angelbroking.smartapi;
 import com.angelbroking.smartapi.http.SmartAPIRequestHandler;
 import com.angelbroking.smartapi.http.exceptions.DataException;
 import com.angelbroking.smartapi.http.exceptions.SmartAPIException;
+import com.angelbroking.smartapi.models.MarginParams;
+import com.angelbroking.smartapi.utils.Constants;
 import lombok.extern.slf4j.Slf4j;
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -15,9 +17,12 @@ import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.fail;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -319,5 +324,122 @@ public class SmartConnectTest {
         return payload;
     }
 
+    public static JSONObject createMarginDataResponse() {
+        JSONObject jsonObject = new JSONObject();
+        jsonObject.put("status", true);
+        jsonObject.put("message", "");
+        jsonObject.put("errorcode", "");
+
+        JSONObject dataObject = new JSONObject();
+        dataObject.put("totalMarginRequired", 218663);
+
+        JSONObject marginComponentsObject = new JSONObject();
+        marginComponentsObject.put("netPremium", 15150);
+        marginComponentsObject.put("spanMargin", 0);
+        marginComponentsObject.put("marginBenefit", 750505);
+        marginComponentsObject.put("deliveryMargin", 0);
+        marginComponentsObject.put("nonNFOMargin", 0);
+        marginComponentsObject.put("totOptionsPremium", 21850);
+
+        dataObject.put("marginComponents", marginComponentsObject);
+
+        JSONArray marginBreakupArray = new JSONArray();
+
+        JSONObject marginBreakupObject = new JSONObject();
+        marginBreakupObject.put("exchange", "NFO");
+        marginBreakupObject.put("productType", "CARRYFORWARD");
+        marginBreakupObject.put("totalMarginRequired", 196813);
+
+        marginBreakupArray.put(marginBreakupObject);
+
+        dataObject.put("marginBreakup", marginBreakupArray);
+
+        JSONObject optionsBuyObject = new JSONObject();
+        optionsBuyObject.put("totOptionsPremium", 21850);
+
+        JSONArray optionDetailsArray = new JSONArray();
+
+        JSONObject optionDetailsObject = new JSONObject();
+        optionDetailsObject.put("exchange", "NFO");
+        optionDetailsObject.put("productType", "CARRYFORWARD");
+        optionDetailsObject.put("token", "53669");
+        optionDetailsObject.put("lotMultiplier", 500);
+        optionDetailsObject.put("optionPremium", 21850);
+
+        optionDetailsArray.put(optionDetailsObject);
+
+        optionsBuyObject.put("optionDetails", optionDetailsArray);
+
+        dataObject.put("optionsBuy", optionsBuyObject);
+
+        jsonObject.put("data", dataObject);
+
+        return jsonObject;
+    }
+
+    public static JSONObject getMarginDataRequestBody() {
+        JSONObject jsonObject = new JSONObject();
+
+        JSONArray positionsArray = new JSONArray();
+
+        JSONObject positionObject = new JSONObject();
+        positionObject.put("exchange", "NFO");
+        positionObject.put("qty", 20);
+        positionObject.put("price", 0);
+        positionObject.put("productType", "INTRADAY");
+        positionObject.put("token", "42885");
+        positionObject.put("tradeType", "BUY");
+
+        positionsArray.put(positionObject);
+
+        jsonObject.put("positions", positionsArray);
+        return jsonObject;
+    }
+
+    @Test
+    public void testMarginData_Success() throws SmartAPIException, IOException {
+        String url = routes.get("api.margin.batch");
+        JSONObject params = getMarginDataRequestBody();
+        log.info("params {} ",params.toString());
+        when(smartAPIRequestHandler.postRequest(eq(this.apiKey), eq(url), eq(params), eq(this.accessToken))).thenReturn(createMarginDataResponse());
+        try {
+            JSONObject response = smartAPIRequestHandler.postRequest(this.apiKey, url, params, this.accessToken);
+            log.info("response {} ",response.toString());
+            JSONObject data = response.getJSONObject("data");
+            assertNotNull(data);
+        } catch (SmartAPIException ex) {
+            log.error("{} while fetching margin data {}", SMART_API_EXCEPTION_OCCURRED, ex.toString());
+            throw new SmartAPIException(String.format("%s in fetching margin data %s", SMART_API_EXCEPTION_ERROR_MSG, ex));
+        } catch (IOException ex) {
+            log.error("{} while fetching margin data {}", IO_EXCEPTION_OCCURRED, ex.getMessage());
+            throw new IOException(String.format("%s fetching margin data %s", IO_EXCEPTION_ERROR_MSG, ex.getMessage()));
+        } catch (JSONException ex) {
+            log.error("{} while fetching margin data {}", JSON_EXCEPTION_OCCURRED, ex.getMessage());
+            throw new JSONException(String.format("%s in fetching margin data %s", JSON_EXCEPTION_ERROR_MSG, ex.getMessage()));
+        }
+    }
+
+    // Testing market data failure for OHLC payload
+    @Test(expected = SmartAPIException.class)
+    public void testMarginData_Failure() throws SmartAPIException, IOException {
+        // Stub the postRequest method
+        String url = routes.get("api.margin.batch");
+        JSONObject params = getMarginDataRequestBody();
+        when(smartAPIRequestHandler.postRequest(eq(this.apiKey), eq(url), eq(params), eq(this.accessToken)))
+                .thenThrow(new SmartAPIException("API request failed"));
+        try {
+            JSONObject response = smartAPIRequestHandler.postRequest(apiKey, url, params, accessToken);
+            response.getJSONObject("data");
+        } catch (SmartAPIException ex) {
+            log.error("{} while fetching margin data {}", SMART_API_EXCEPTION_OCCURRED, ex.toString());
+            throw new SmartAPIException(String.format("%s in fetching margin data %s", SMART_API_EXCEPTION_ERROR_MSG, ex));
+        } catch (IOException ex) {
+            log.error("{} while fetching margin data {}", IO_EXCEPTION_OCCURRED, ex.getMessage());
+            throw new IOException(String.format("%s in fetching margin data %s", IO_EXCEPTION_ERROR_MSG, ex.getMessage()));
+        } catch (JSONException ex) {
+            log.error("{} while fetching margin data {}", JSON_EXCEPTION_OCCURRED, ex.getMessage());
+            throw new JSONException(String.format("%s in fetching margin data %s", JSON_EXCEPTION_ERROR_MSG, ex.getMessage()));
+        }
+    }
 }
 

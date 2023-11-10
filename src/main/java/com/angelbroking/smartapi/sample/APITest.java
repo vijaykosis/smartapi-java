@@ -101,6 +101,9 @@ public class APITest {
 			/* System.out.println("logout"); */
 			examples.logout(smartConnect);
 
+			/* System.out.println("Margin Details"); */
+			examples.getMarginDetails(smartConnect);
+
 			/* SmartAPITicker */
 			String clientId = "<clientId>";
 			User user = smartConnect.generateSession("<clientId>", "<password>", "<totp>");
