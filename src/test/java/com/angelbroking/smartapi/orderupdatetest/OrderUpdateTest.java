@@ -7,9 +7,12 @@ import com.angelbroking.smartapi.orderupdate.OrderUpdateWebsocket;
 import com.angelbroking.smartapi.smartstream.models.SmartStreamError;
 import com.neovisionaries.ws.client.WebSocketException;
 import com.warrenstrange.googleauth.GoogleAuthenticator;
+import lombok.extern.slf4j.Slf4j;
+import org.json.JSONObject;
 import org.junit.Test;
 import org.junit.jupiter.api.BeforeAll;
 
+@Slf4j
 public class OrderUpdateTest {
     private static String clientID;
     private static String clientPass;
@@ -54,28 +57,34 @@ public class OrderUpdateTest {
         System.out.println("feedToken = " + feedToken);
         String accessToken = user.getAccessToken();
         System.out.println("accessToken = " + accessToken);
-        OrderUpdateWebsocket orderUpdateWebsocket = new OrderUpdateWebsocket(feedToken, new OrderUpdateListner() {
+        OrderUpdateWebsocket orderUpdateWebsocket = new OrderUpdateWebsocket(accessToken, new OrderUpdateListner() {
             @Override
             public void onConnected() {
-                System.out.println("Connected");
+                log.info("Connected");
             }
 
             @Override
             public void onDisconnected() {
-
+                log.info("Disconnected");
             }
 
             @Override
             public void onError(SmartStreamError error) {
-
+                log.info("error {} ",error.getException().getMessage());
             }
 
             @Override
             public void onPong() {
+                log.info("Pong");
+            }
 
+            @Override
+            public void onOrderUpdate(String data) {
+                log.info("data {} ",data);
             }
         });
 
         orderUpdateWebsocket.connect();
+
     }
 }

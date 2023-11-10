@@ -18,7 +18,7 @@ public class OrderUpdateWebsocket {
     private static final int PING_INTERVAL = 10000; // 10 seconds
     private static final String HEADER = "Authorization";
     private final Routes routes = new Routes();
-    private final String wsuri = routes.getSmartStreamWSURI();
+    private final String wsuri = routes.getOrderUpdateUri();
     private WebSocket ws;
     private String accessToken;
     private final OrderUpdateListner orderUpdateListner;
@@ -60,15 +60,60 @@ public class OrderUpdateWebsocket {
             @Override
             public void onConnected(WebSocket websocket, Map<String, List<String>> headers) throws WebSocketException {
                 orderUpdateListner.onConnected();
-//                startPingTimer(websocket);
+                startPingTimer(websocket);
             }
 
             @Override
             public void onTextMessage(WebSocket websocket, String text) throws Exception {
-                log.info("onTextMessage - {}", text);
-//                orderUpdateListner.onTextMessage(text);
+                try {
+                    orderUpdateListner.onOrderUpdate(text);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
             }
 
+            /**
+             * On disconnection, return statement ensures that the thread ends.
+             *
+             * @param websocket
+             * @param serverCloseFrame
+             * @param clientCloseFrame
+             * @param closedByServer
+             * @throws Exception
+             */
+            @Override
+            public void onDisconnected(WebSocket websocket, WebSocketFrame serverCloseFrame,
+                                       WebSocketFrame clientCloseFrame, boolean closedByServer) {
+                try {
+                    if (closedByServer) {
+                        reconnect();
+                    } else {
+                        stopPingTimer();
+                        orderUpdateListner.onDisconnected();
+                    }
+                } catch (Exception e) {
+                    SmartStreamError error = new SmartStreamError();
+                    error.setException(e);
+                    orderUpdateListner.onError(error);
+                }
+            }
+
+            @Override
+            public void onCloseFrame(WebSocket websocket, WebSocketFrame frame) throws Exception {
+                super.onCloseFrame(websocket, frame);
+            }
+
+            @Override
+            public void onPongFrame(WebSocket websocket, WebSocketFrame frame) throws Exception {
+                try {
+                    lastPongReceivedTime = LocalDateTime.now();
+                    orderUpdateListner.onPong();
+                } catch (Exception e) {
+                    SmartStreamError error = new SmartStreamError();
+                    error.setException(e);
+                    orderUpdateListner.onError(error);
+                }
+            }
         };
     }
 
@@ -82,7 +127,7 @@ public class OrderUpdateWebsocket {
                     LocalDateTime currentTime = LocalDateTime.now();
                     if (lastPongReceivedTime.isBefore(currentTime.minusSeconds(20))) {
                         websocket.disconnect();
-                        reconnectAndResubscribe();
+                        reconnect();
                     }
                 } catch (Exception e) {
                     orderUpdateListner.onError(getErrorHolder(e));
@@ -91,15 +136,18 @@ public class OrderUpdateWebsocket {
         }, 5000, 5000); // run at every 5 second
     }
 
-    private void reconnectAndResubscribe() throws WebSocketException {
-        log.info("reconnectAndResubscribe - started");
+    private void stopPingTimer() {
+        if (Utils.validateInputNotNullCheck(pingTimer)) {
+            pingTimer.cancel();
+            pingTimer = null;
+        }
+    }
+
+    private void reconnect() throws WebSocketException {
+        log.info("reconnect - started");
         init();
         connect();
-        // resubscribing the existing tokens as per the mode
-//        tokensByModeMap.forEach((mode,tokens) -> {
-//            subscribe(mode, tokens);
-//        });
-        log.info("reconnectAndResubscribe - done");
+        log.info("reconnect - done");
     }
 
     private SmartStreamError getErrorHolder(Exception e) {

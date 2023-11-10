@@ -7,4 +7,6 @@ public interface OrderUpdateListner {
     void onDisconnected();
     void onError(SmartStreamError error);
     void onPong();
+
+    void onOrderUpdate(String data);
 }
