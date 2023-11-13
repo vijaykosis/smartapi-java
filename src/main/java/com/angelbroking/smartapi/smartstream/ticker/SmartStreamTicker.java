@@ -12,6 +12,8 @@ import java.util.Timer;
 import java.util.TimerTask;
 
 import com.angelbroking.smartapi.smartstream.models.*;
+import com.neovisionaries.ws.client.*;
+import lombok.SneakyThrows;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
@@ -19,11 +21,6 @@ import com.angelbroking.smartapi.Routes;
 import com.angelbroking.smartapi.http.exceptions.SmartAPIException;
 import com.angelbroking.smartapi.utils.ByteUtils;
 import com.angelbroking.smartapi.utils.Utils;
-import com.neovisionaries.ws.client.WebSocket;
-import com.neovisionaries.ws.client.WebSocketAdapter;
-import com.neovisionaries.ws.client.WebSocketException;
-import com.neovisionaries.ws.client.WebSocketFactory;
-import com.neovisionaries.ws.client.WebSocketFrame;
 
 import lombok.extern.slf4j.Slf4j;
 
@@ -37,6 +34,7 @@ public class SmartStreamTicker {
 
 	private final Routes routes = new Routes();
 	private final String wsuri = routes.getSmartStreamWSURI();
+
 	private final SmartStreamListener smartStreamListener;
 	private WebSocket ws;
 	private final String clientId;
@@ -71,7 +69,7 @@ public class SmartStreamTicker {
 					.setVerifyHostname(false)
 					.createSocket(wsuri)
 					.setPingInterval(PING_INTERVAL);
-			ws.addHeader(CLIENT_ID_HEADER, clientId); 
+			ws.addHeader(CLIENT_ID_HEADER, clientId);
 			ws.addHeader(FEED_TOKEN_HEADER, feedToken);
 			ws.addHeader(CLIENT_LIB_HEADER, "JAVA");
 			ws.addListener(getWebsocketAdapter());
@@ -186,14 +184,19 @@ public class SmartStreamTicker {
                     smartStreamListener.onError(error);
                 }
 			}
-			
+
 			@Override
 			public void onCloseFrame(WebSocket websocket, WebSocketFrame frame) throws Exception {
 				super.onCloseFrame(websocket, frame);
 			}
+
+			@Override
+			public void onError(WebSocket websocket, WebSocketException cause) throws Exception {
+				smartStreamListener.onErrorCustom();
+			}
 		};
 	}
-	
+
 	private void startPingTimer(final WebSocket websocket) {
 
         pingTimer = new Timer();
@@ -242,7 +245,7 @@ public class SmartStreamTicker {
 
 	/**
 	 * Returns true if websocket connection is open.
-	 * 
+	 *
 	 * @return boolean
 	 */
 	public boolean isConnectionOpen() {
@@ -251,7 +254,7 @@ public class SmartStreamTicker {
 
 	/**
 	 * Returns true if websocket connection is closed.
-	 * 
+	 *
 	 * @return boolean
 	 */
 	public boolean isConnectionClosed() {
@@ -328,7 +331,7 @@ public class SmartStreamTicker {
 			JSONObject exchangeTokenObj = new JSONObject();
 			exchangeTokenObj.put("exchangeType", ex.getVal());
 			exchangeTokenObj.put("tokens", t);
-			
+
 			exchangeTokenList.put(exchangeTokenObj);
 		});
 
