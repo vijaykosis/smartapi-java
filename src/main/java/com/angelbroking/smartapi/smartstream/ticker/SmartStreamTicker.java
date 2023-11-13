@@ -57,7 +57,7 @@ public class SmartStreamTicker {
      * @throws IllegalArgumentException - if the clientId, feedToken, or SmartStreamListener is null or empty
      */
     public SmartStreamTicker(String clientId, String feedToken, SmartStreamListener smartStreamListener) {
-        if (Utils.isEmpty(clientId) || Utils.isEmpty(feedToken) ||  Utils.validateInputNullCheck(smartStreamListener)) {
+        if (clientId.isEmpty() || feedToken.isEmpty() ||  Utils.validateInputNullCheck(smartStreamListener)) {
             throw new IllegalArgumentException(
                     "clientId, feedToken and SmartStreamListener should not be empty or null");
         }
@@ -79,7 +79,7 @@ public class SmartStreamTicker {
 	 * @throws IllegalArgumentException - if the clientId, feedToken, or SmartStreamListener is null or empty
 	 */
 	public SmartStreamTicker(String clientId, String feedToken, SmartStreamListener smartStreamListener, Integer delay, Integer period ) {
-		if (Utils.isEmpty(clientId) || Utils.isEmpty(feedToken) || Utils.isEmpty(delay) || Utils.isEmpty(period) ||  Utils.validateInputNullCheck(smartStreamListener)) {
+		if (clientId.isEmpty() || feedToken.isEmpty() || Utils.isEmpty(delay) || Utils.isEmpty(period) ||  Utils.validateInputNullCheck(smartStreamListener)) {
 			throw new IllegalArgumentException(
 					"clientId, feedToken and SmartStreamListener should not be empty or null");
 		}
