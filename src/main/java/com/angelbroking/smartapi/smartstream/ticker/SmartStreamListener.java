@@ -13,4 +13,6 @@ public interface SmartStreamListener {
 	void onDisconnected();
 	void onError(SmartStreamError error);
 	void onPong();
+
+	SmartStreamError onErrorCustom();
 }
