@@ -27,7 +27,7 @@ public class OrderUpdateWebsocket {
     private LocalDateTime lastPongReceivedTime = LocalDateTime.now();
 
     public OrderUpdateWebsocket(String accessToken, OrderUpdateListner orderUpdateListner) {
-        if (Utils.isEmpty(accessToken) || Utils.validateInputNullCheck(orderUpdateListner)) {
+        if (accessToken.isEmpty() || Utils.validateInputNullCheck(orderUpdateListner)) {
             throw new IllegalArgumentException(
                     "clientId, feedToken and SmartStreamListener should not be empty or null");
         }
