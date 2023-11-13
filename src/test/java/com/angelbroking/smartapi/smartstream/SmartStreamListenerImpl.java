@@ -5,6 +5,7 @@ import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.util.Arrays;
 
+import com.angelbroking.smartapi.http.exceptions.SmartAPIException;
 import com.angelbroking.smartapi.smartstream.models.*;
 import com.angelbroking.smartapi.smartstream.ticker.SmartStreamListener;
 
@@ -103,6 +104,16 @@ public class SmartStreamListenerImpl implements SmartStreamListener {
 	@Override
 	public void onPong() {
 		log.info("pong received");
+	}
+
+	/* Custom on error method for SmartStream */
+	@Override
+	public SmartStreamError onErrorCustom() {
+		// User thrown error return
+		log.info("on custom error");
+		SmartStreamError smartStreamError = new SmartStreamError();
+		smartStreamError.setException(new SmartAPIException("custom error received"));
+		return smartStreamError;
 	}
 
 	@Override
