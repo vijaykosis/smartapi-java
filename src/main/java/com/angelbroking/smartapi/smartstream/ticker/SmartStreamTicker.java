@@ -29,8 +29,8 @@ public class SmartStreamTicker {
 
 	private static int PING_INTERVAL = 10000; // 10 seconds
 
-	private static int DELAY = 5000;
-	private static int PERIOD = 5000;
+	private static int DELAY = 5000; // initial delay in seconds
+	private static int PERIOD = 5000; // initial period in seconds
 	private static final String CLIENT_ID_HEADER = "x-client-code";
 	private static final String FEED_TOKEN_HEADER = "x-feed-token";
 	private static final String CLIENT_LIB_HEADER = "x-client-lib";
