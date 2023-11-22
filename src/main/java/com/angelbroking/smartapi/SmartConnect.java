@@ -852,7 +852,13 @@ public class SmartConnect {
 		} catch (SmartAPIException ex) {
 			log.error("{} while getting individual order {}", SMART_API_EXCEPTION_OCCURRED, ex.toString());
 			throw new SmartAPIException(String.format("%s in getting individual order %s", SMART_API_EXCEPTION_ERROR_MSG, ex));
-		}
+		} catch (IOException ex) {
+		   log.error("{} while getting individual order {}", IO_EXCEPTION_OCCURRED, ex.getMessage());
+		   throw new IOException(String.format("%s  while fetching margin data %s", IO_EXCEPTION_ERROR_MSG, ex.getMessage()));
+	   } catch (JSONException ex) {
+		   log.error("{}  while getting individual order {}", JSON_EXCEPTION_OCCURRED, ex.getMessage());
+		   throw new JSONException(String.format("%s  while fetching margin data %s", JSON_EXCEPTION_ERROR_MSG, ex.getMessage()));
+	   }
 	}
 }
 
