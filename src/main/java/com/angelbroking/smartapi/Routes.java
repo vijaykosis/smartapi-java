@@ -48,6 +48,7 @@ public class Routes {
 				put("api.search.script.data", "/rest/secure/angelbroking/order/v1/searchScrip");
 				put("api.market.data", "/rest/secure/angelbroking/market/v1/quote");
 				put("api.margin.batch", "/rest/secure/angelbroking/margin/v1/batch");
+				put("api.individual.order", "/rest/secure/angelbroking/order/v1/details/");
 			}
 		};
 	}
