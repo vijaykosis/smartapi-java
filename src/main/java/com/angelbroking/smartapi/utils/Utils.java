@@ -5,10 +5,6 @@ public class Utils {
 		
 	}
 
-	public static boolean isEmpty(final String cs) {
-		return cs == null || cs.length() == 0;
-	}
-
 	public static boolean isEmpty(final Integer nm) {
 		return nm == null || nm.equals(0);
 	}
