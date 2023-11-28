@@ -9,10 +9,6 @@ public class Utils {
 		return nm == null || nm.equals(0);
 	}
 
-	public static boolean isNotEmpty(final Integer cs) {
-		return !isEmpty(cs);
-	}
-
 	public static boolean areCharArraysEqual(char[] a, char[] b) {
 		if (a == null && b == null) {
 			return true;
