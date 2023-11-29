@@ -34,7 +34,7 @@ import static com.angelbroking.smartapi.utils.Constants.TOKEN_EXCEPTION_MESSAGE;
 public class SmartAPIResponseHandler {
 
 	public JSONObject handle(Response response, String body) throws IOException, SmartAPIException, JSONException {
-		System.out.println("***************************");
+		log.info("***************************");
 		if (response.header("Content-Type").contains("json")) {
 			JSONObject jsonObject = new JSONObject(body);
 
