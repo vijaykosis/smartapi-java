@@ -5,6 +5,7 @@ import com.angelbroking.smartapi.smartstream.models.SmartStreamError;
 import com.angelbroking.smartapi.utils.Utils;
 import com.neovisionaries.ws.client.*;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang.StringUtils;
 
 import java.io.IOException;
 import java.time.LocalDateTime;
@@ -15,8 +16,10 @@ import java.util.TimerTask;
 
 @Slf4j
 public class OrderUpdateWebsocket {
-    private static final int PING_INTERVAL = 10000; // 10 seconds
-    private static final String HEADER = "Authorization";
+    private static final int pingIntervalInMilliSeconds = 10000; // 10 seconds
+    private static final String headerAuthorization = "Authorization";
+    private static final Integer delayInMilliSeconds = 5000;
+    private static final Integer periodInMilliSeconds = 5000;
     private final Routes routes = new Routes();
     private final String wsuri = routes.getOrderUpdateUri();
     private WebSocket ws;
@@ -26,8 +29,14 @@ public class OrderUpdateWebsocket {
     private Timer pingTimer;
     private LocalDateTime lastPongReceivedTime = LocalDateTime.now();
 
+    /**
+     * Initializes the OrderUpdateWebsocket.
+     *
+     * @param accessToken
+     * @param orderUpdateListner
+     */
     public OrderUpdateWebsocket(String accessToken, OrderUpdateListner orderUpdateListner) {
-        if (Utils.isEmpty(accessToken) || Utils.validateInputNullCheck(orderUpdateListner)) {
+        if (StringUtils.isEmpty(accessToken) || Utils.validateInputNullCheck(orderUpdateListner)) {
             throw new IllegalArgumentException(
                     "clientId, feedToken and SmartStreamListener should not be empty or null");
         }
@@ -45,8 +54,8 @@ public class OrderUpdateWebsocket {
             ws = new WebSocketFactory()
                     .setVerifyHostname(false)
                     .createSocket(wsuri)
-                    .setPingInterval(PING_INTERVAL);
-            ws.addHeader(HEADER, "Bearer " + accessToken);
+                    .setPingInterval(pingIntervalInMilliSeconds);
+            ws.addHeader(headerAuthorization, "Bearer " + accessToken);
             ws.addListener(getWebsocketAdapter());
         } catch (IOException e) {
             if (Utils.validateInputNotNullCheck(orderUpdateListner)) {
@@ -133,7 +142,7 @@ public class OrderUpdateWebsocket {
                     orderUpdateListner.onError(getErrorHolder(e));
                 }
             }
-        }, 5000, 5000); // run at every 5 second
+        }, delayInMilliSeconds, periodInMilliSeconds); // run at every 5 second
     }
 
     private void stopPingTimer() {
