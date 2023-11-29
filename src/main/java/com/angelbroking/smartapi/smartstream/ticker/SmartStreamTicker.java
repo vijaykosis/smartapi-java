@@ -13,7 +13,7 @@ import java.util.TimerTask;
 
 import com.angelbroking.smartapi.smartstream.models.*;
 import com.neovisionaries.ws.client.*;
-import lombok.SneakyThrows;
+import org.apache.commons.lang.StringUtils;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
@@ -24,13 +24,17 @@ import com.angelbroking.smartapi.utils.Utils;
 
 import lombok.extern.slf4j.Slf4j;
 
+
 @Slf4j
 public class SmartStreamTicker {
 
-	private static final int PING_INTERVAL = 10000; // 10 seconds
-	private static final String CLIENT_ID_HEADER = "x-client-code";
-	private static final String FEED_TOKEN_HEADER = "x-feed-token";
-	private static final String CLIENT_LIB_HEADER = "x-client-lib";
+	private static int pingIntervalInMilliSeconds = 10000; // 10 seconds
+
+	private static int delayInMilliSeconds = 5000; // initial delay in seconds
+	private static int periodInMilliSeconds = 5000; // initial period in seconds
+	private static final String clientIdHeader = "x-client-code";
+	private static final String feedTokenHeader = "x-feed-token";
+	private static final String clientLibHeader = "x-client-lib";
 
 	private final Routes routes = new Routes();
 	private final String wsuri = routes.getSmartStreamWSURI();
@@ -52,7 +56,7 @@ public class SmartStreamTicker {
      * @throws IllegalArgumentException - if the clientId, feedToken, or SmartStreamListener is null or empty
      */
     public SmartStreamTicker(String clientId, String feedToken, SmartStreamListener smartStreamListener) {
-        if (Utils.isEmpty(clientId) || Utils.isEmpty(feedToken) ||  Utils.validateInputNullCheck(smartStreamListener)) {
+        if (StringUtils.isEmpty(clientId) || StringUtils.isEmpty(feedToken) ||  Utils.validateInputNullCheck(smartStreamListener)) {
             throw new IllegalArgumentException(
                     "clientId, feedToken and SmartStreamListener should not be empty or null");
         }
@@ -63,15 +67,39 @@ public class SmartStreamTicker {
         init();
     }
 
+	/**
+	 * Initializes the SmartStreamTicker.
+	 *
+	 * @param clientId            - the client ID used for authentication
+	 * @param feedToken           - the feed token used for authentication
+	 * @param delay               - delay in milliseconds
+	 * @param period              - period in milliseconds
+	 * @param smartStreamListener - the SmartStreamListener for receiving callbacks
+	 * @throws IllegalArgumentException - if the clientId, feedToken, or SmartStreamListener is null or empty
+	 */
+	public SmartStreamTicker(String clientId, String feedToken, SmartStreamListener smartStreamListener, Integer delay, Integer period ) {
+		if (StringUtils.isEmpty(clientId) || StringUtils.isEmpty(feedToken) || Utils.isEmpty(delay) || Utils.isEmpty(period) ||  Utils.validateInputNullCheck(smartStreamListener)) {
+			throw new IllegalArgumentException(
+					"clientId, feedToken and SmartStreamListener should not be empty or null");
+		}
+		this.delayInMilliSeconds = delay;
+		this.periodInMilliSeconds = period;
+		this.clientId = clientId;
+		this.feedToken = feedToken;
+		this.smartStreamListener = smartStreamListener;
+		init();
+	}
+
+
 	private void init() {
 		try {
 			ws = new WebSocketFactory()
 					.setVerifyHostname(false)
 					.createSocket(wsuri)
-					.setPingInterval(PING_INTERVAL);
-			ws.addHeader(CLIENT_ID_HEADER, clientId);
-			ws.addHeader(FEED_TOKEN_HEADER, feedToken);
-			ws.addHeader(CLIENT_LIB_HEADER, "JAVA");
+					.setPingInterval(pingIntervalInMilliSeconds);
+			ws.addHeader(clientIdHeader, clientId);
+			ws.addHeader(feedTokenHeader, feedToken);
+			ws.addHeader(clientLibHeader, "JAVA");
 			ws.addListener(getWebsocketAdapter());
 		} catch (IOException e) {
 			if (Utils.validateInputNotNullCheck(smartStreamListener)) {
@@ -79,6 +107,7 @@ public class SmartStreamTicker {
 			}
 		}
 	}
+
 
 	private SmartStreamError getErrorHolder(Throwable e) {
 		SmartStreamError error = new SmartStreamError();
@@ -213,7 +242,7 @@ public class SmartStreamTicker {
                     smartStreamListener.onError(getErrorHolder(e));
                 }
             }
-        }, 5000, 5000); // run at every 5 second
+        }, delayInMilliSeconds, periodInMilliSeconds); // run at every 5 second
     }
 
     private void stopPingTimer() {

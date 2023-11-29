@@ -62,6 +62,25 @@ public class SmartStreamTickerTest {
 
 	}
 
+	@Test
+	void testSmartStreamTicket_WithInitialDelayAndPeriod() throws WebSocketException, InterruptedException {
+		try {
+			SmartStreamTicker ticker = new SmartStreamTicker(clientID, feedToken, new SmartStreamListenerImpl(), 6000, 6000);
+			ticker.connect();
+			ticker.subscribe(SmartStreamSubsMode.SNAP_QUOTE, getTokens());
+//			ticker.subscribe(SmartStreamSubsMode.SNAP_QUOTE, getTokens());
+			// uncomment the below line to allow test thread to keep running so that ticks
+			// can be received in the listener
+//			Thread.sleep(5000);
+			ticker.disconnect();
+			System.out.println("isConnected = "+ticker.isConnectionOpen());
+		} catch (Exception e) {
+			e.printStackTrace();
+			throw e;
+		}
+
+	}
+
 	private Set<TokenID> getTokens(){
 		// find out the required token from https://margincalculator.angelbroking.com/OpenAPI_File/files/OpenAPIScripMaster.json
 		Set<TokenID> tokenSet = new HashSet<>();
