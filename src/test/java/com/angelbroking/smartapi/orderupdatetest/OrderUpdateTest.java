@@ -12,51 +12,35 @@ import org.json.JSONObject;
 import org.junit.Test;
 import org.junit.jupiter.api.BeforeAll;
 
+import java.util.Scanner;
+
 @Slf4j
 public class OrderUpdateTest {
     private static String clientID;
     private static String clientPass;
     private static String apiKey;
-    private static String feedToken;
+    private static String accessToken;
     private static String totp;
 
     @BeforeAll
     public void init(){
-        clientID = "V53536308";
-        clientPass = "1618";
-        apiKey = "sTqSAb7f";
-        GoogleAuthenticator gAuth = new GoogleAuthenticator();
-        String totp_key = "C24L62RAZDYQH5ZGXJVWTW5QQA";
-        totp = String.valueOf(gAuth.getTotpPassword(totp_key));
+        clientID = System.getProperty("clientID");
+        clientPass = System.getProperty("clientPass");
+        apiKey = System.getProperty("apiKey");
+
+        Scanner sc = new Scanner(System.in);
+        log.info("enter totp: ");
+        totp = sc.nextLine();
 
         SmartConnect smartConnect = new SmartConnect(apiKey);
         User user = smartConnect.generateSession(clientID, clientPass, totp);
-        System.out.println("user = " + user);
         smartConnect.setAccessToken(user.getAccessToken());
         smartConnect.setUserId(user.getUserId());
-
-        feedToken = user.getFeedToken();
+        accessToken = user.getAccessToken();
     }
 
     @Test
     public void testOrderUpdate_success() throws WebSocketException {
-        clientID = "V53536308";
-        clientPass = "1618";
-        apiKey = "sTqSAb7f";
-        GoogleAuthenticator gAuth = new GoogleAuthenticator();
-        String totp_key = "C24L62RAZDYQH5ZGXJVWTW5QQA";
-        totp = String.valueOf(gAuth.getTotpPassword(totp_key));
-
-        SmartConnect smartConnect = new SmartConnect(apiKey);
-        User user = smartConnect.generateSession(clientID, clientPass, totp);
-        System.out.println("user = " + user);
-        smartConnect.setAccessToken(user.getAccessToken());
-        smartConnect.setUserId(user.getUserId());
-
-        feedToken = user.getFeedToken();
-        System.out.println("feedToken = " + feedToken);
-        String accessToken = user.getAccessToken();
-        System.out.println("accessToken = " + accessToken);
         OrderUpdateWebsocket orderUpdateWebsocket = new OrderUpdateWebsocket(accessToken, new OrderUpdateListner() {
             @Override
             public void onConnected() {

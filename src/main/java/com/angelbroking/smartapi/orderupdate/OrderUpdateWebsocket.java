@@ -37,6 +37,7 @@ public class OrderUpdateWebsocket {
      */
     public OrderUpdateWebsocket(String accessToken, OrderUpdateListner orderUpdateListner) {
         if (StringUtils.isEmpty(accessToken) || Utils.validateInputNullCheck(orderUpdateListner)) {
+
             throw new IllegalArgumentException(
                     "clientId, feedToken and SmartStreamListener should not be empty or null");
         }
