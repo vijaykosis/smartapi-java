@@ -33,7 +33,7 @@ public class SmartConnect {
 	private String refreshToken;
 	private Routes routes = new Routes();
 	private String userId;
-	private SmartAPIRequestHandler smartAPIRequestHandler;
+	private SmartAPIRequestHandler smartAPIRequestHandler = new SmartAPIRequestHandler(proxy);
 
 	public SmartConnect() {
 
@@ -720,12 +720,12 @@ public class SmartConnect {
 	 * @param params is historic data params.
 	 * @return returns the details of historic data.
 	 */
-	public String candleData(JSONObject params) {
+	public JSONArray candleData(JSONObject params) {
 		try {
 			String url = routes.get("api.candle.data");
 			JSONObject response = smartAPIRequestHandler.postRequest(this.apiKey, url, params, accessToken);
 			log.info("response : {}",response);
-			return response.getString("data");
+			return response.getJSONArray("data");
 		} catch (Exception | SmartAPIException e) {
 			log.error(e.getMessage());
 			return null;
