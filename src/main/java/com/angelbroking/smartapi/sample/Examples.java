@@ -275,7 +275,7 @@ public class Examples {
 		requestObejct.put("fromdate", "2021-03-08 09:00");
 		requestObejct.put("todate", "2021-03-09 09:20");
 
-		String response = smartConnect.candleData(requestObejct);
+		JSONArray response = smartConnect.candleData(requestObejct);
 	}
 
 
