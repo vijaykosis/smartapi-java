@@ -15,6 +15,7 @@ import org.json.JSONObject;
 import java.io.IOException;
 import java.net.Proxy;
 import java.util.List;
+import javax.net.ssl.HttpsURLConnection;
 
 import static com.angelbroking.smartapi.utils.Constants.IO_EXCEPTION_ERROR_MSG;
 import static com.angelbroking.smartapi.utils.Constants.IO_EXCEPTION_OCCURRED;
@@ -36,7 +37,8 @@ public class SmartConnect {
 	private SmartAPIRequestHandler smartAPIRequestHandler = new SmartAPIRequestHandler(proxy);
 
 	public SmartConnect() {
-
+		//setting up TLS min and max version
+		System.setProperty("https.protocols","TLSv1.2,TLSv1.3");
 	}
 
 	public SmartConnect(String apiKey) {
