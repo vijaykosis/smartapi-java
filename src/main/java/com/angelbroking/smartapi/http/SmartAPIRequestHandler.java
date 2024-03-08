@@ -2,6 +2,8 @@ package com.angelbroking.smartapi.http;
 
 import com.angelbroking.smartapi.SmartConnect;
 import com.angelbroking.smartapi.http.exceptions.SmartAPIException;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
 import okhttp3.FormBody;
 import okhttp3.HttpUrl;
@@ -130,9 +132,22 @@ public class SmartAPIRequestHandler {
 			throws IOException, JSONException, SmartAPIException {
 
 		Request request = createPostRequest(apiKey, url, params);
-		Response response = client.newCall(request).execute();
-		String body = response.body().string();
-		return new SmartAPIResponseHandler().handle(response, body);
+		try{
+			Response response = client.newCall(request).execute();
+			String body = response.body().string();
+			ObjectMapper objectMapper = new ObjectMapper();
+			JsonNode jsonNode = objectMapper.readTree(body);
+			if(jsonNode.get("status") == null){
+				log.error("Error in POST request. Request URL: {}, Request Headers: {}, Request Body: {},Response : {}",
+						url, request.headers(), params,body);
+			}
+			return new SmartAPIResponseHandler().handle(response, body);
+		}
+		catch (Exception e){
+			log.error("Error in POST request. Request URL: {}, Request Headers: {}, Request Body: {},Response : {}",
+					url, request.headers(), params,e.getMessage());
+			throw e;
+		}
 
 	}
 
@@ -152,9 +167,22 @@ public class SmartAPIRequestHandler {
 	public JSONObject postRequest(String apiKey, String url, JSONObject params, String accessToken)
 			throws IOException, SmartAPIException, JSONException {
 		Request request = createPostRequest(apiKey, url, params, accessToken);
-		Response response = client.newCall(request).execute();
-		String body = response.body().string();
-		return new SmartAPIResponseHandler().handle(response, body);
+		try{
+			Response response = client.newCall(request).execute();
+			String body = response.body().string();
+			ObjectMapper objectMapper = new ObjectMapper();
+			JsonNode jsonNode = objectMapper.readTree(body);
+			if(jsonNode.get("status") == null){
+				log.error("Error in POST request. Request URL: {}, Request Headers: {}, Request Body: {},Response : {}",
+						url, request.headers(), params,body);
+			}
+			return new SmartAPIResponseHandler().handle(response, body);
+		}
+		catch (Exception e){
+			log.error("Error in POST request. Request URL: {}, Request Headers: {}, Request Body: {},Response : {}",
+					url, request.headers(), params,e.getMessage());
+			throw e;
+		}
 	}
 
 	/**
@@ -240,9 +268,22 @@ public class SmartAPIRequestHandler {
 	public JSONObject getRequest(String apiKey, String url, String accessToken)
 			throws IOException, SmartAPIException, JSONException {
 		Request request = createGetRequest(apiKey, url, accessToken);
-		Response response = client.newCall(request).execute();
-		String body = response.body().string();
-		return new SmartAPIResponseHandler().handle(response, body);
+		try {
+			Response response = client.newCall(request).execute();
+			String body = response.body().string();
+			ObjectMapper objectMapper = new ObjectMapper();
+			JsonNode jsonNode = objectMapper.readTree(body);
+			if(jsonNode.get("status") == null){
+				log.error("Error in GET request. Request URL: {}, Request Headers: {},Response : {}",
+						url, request.headers(),body);
+			}
+			return new SmartAPIResponseHandler().handle(response, body);
+		}
+		catch (Exception e){
+			log.error("Error in POST request. Request URL: {}, Request Headers: {},Response : {}",
+					url, request.headers(),e.getMessage());
+			throw e;
+		}
 	}
 
 	/**
@@ -390,9 +431,22 @@ public class SmartAPIRequestHandler {
 	public String postRequestJSONObject(String apiKey, String url, JSONObject params, String accessToken)
 			throws IOException, SmartAPIException, JSONException {
 		Request request = createPostRequest(apiKey, url, params, accessToken);
-		Response response = client.newCall(request).execute();
-		String body = response.body().string();
-		return new SmartAPIResponseHandler().handler(response, body);
+		try{
+			Response response = client.newCall(request).execute();
+			String body = response.body().string();
+			ObjectMapper objectMapper = new ObjectMapper();
+			JsonNode jsonNode = objectMapper.readTree(body);
+			if(jsonNode.get("status") == null){
+				log.error("Error in POST request. Request URL: {}, Request Headers: {}, Request Body: {},Response : {}",
+						url, request.headers(), params,body);
+			}
+			return new SmartAPIResponseHandler().handler(response, body);
+		}
+		catch (Exception e){
+			log.error("Error in POST request. Request URL: {}, Request Headers: {}, Request Body: {},Response : {}",
+					url, request.headers(), params,e.getMessage());
+			throw e;
+		}
 	}
 
 	/**
