@@ -1,30 +1,31 @@
 package com.angelbroking.smartapi.sample;
 
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
-
-import org.json.JSONArray;
-import org.json.JSONObject;
-
 import com.angelbroking.smartapi.SmartConnect;
 import com.angelbroking.smartapi.http.exceptions.SmartAPIException;
-import com.angelbroking.smartapi.models.Gtt;
-import com.angelbroking.smartapi.models.GttParams;
-import com.angelbroking.smartapi.models.Order;
-import com.angelbroking.smartapi.models.OrderParams;
-import com.angelbroking.smartapi.models.User;
+import com.angelbroking.smartapi.models.*;
+import com.angelbroking.smartapi.orderupdate.OrderUpdateListner;
+import com.angelbroking.smartapi.orderupdate.OrderUpdateWebsocket;
 import com.angelbroking.smartapi.smartTicker.SmartWSOnConnect;
 import com.angelbroking.smartapi.smartTicker.SmartWSOnDisconnect;
 import com.angelbroking.smartapi.smartTicker.SmartWSOnError;
 import com.angelbroking.smartapi.smartTicker.SmartWSOnTicks;
 import com.angelbroking.smartapi.smartTicker.SmartWebsocket;
+import com.angelbroking.smartapi.smartstream.models.SmartStreamError;
 import com.angelbroking.smartapi.ticker.OnConnect;
 import com.angelbroking.smartapi.ticker.OnTicks;
 import com.angelbroking.smartapi.ticker.SmartAPITicker;
 import com.angelbroking.smartapi.utils.Constants;
+import lombok.extern.slf4j.Slf4j;
+import org.json.JSONArray;
+import org.json.JSONObject;
+
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 
 @SuppressWarnings("unused")
+@Slf4j
+
 public class Examples {
 
 	public void getProfile(SmartConnect smartConnect) throws IOException, SmartAPIException {
@@ -35,9 +36,9 @@ public class Examples {
 
 	/* VARIETY */
 	/*
-	 * VARIETY_NORMAL: Normal Order (Regular) 
+	 * VARIETY_NORMAL: Normal Order (Regular)
 	 * VARIETY_AMO: After Market Order
-	 * VARIETY_STOPLOSS: Stop loss order 
+	 * VARIETY_STOPLOSS: Stop loss order
 	 * VARIETY_ROBO: ROBO (Bracket) Order
 	 */
 	/* TRANSACTION TYPE */
@@ -47,7 +48,7 @@ public class Examples {
 
 	/* ORDER TYPE */
 	/*
-	 * ORDER_TYPE_MARKET: Market Order(MKT) 
+	 * ORDER_TYPE_MARKET: Market Order(MKT)
 	 * ORDER_TYPE_LIMIT: Limit Order(L)
 	 * ORDER_TYPE_STOPLOSS_LIMIT: Stop Loss Limit Order(SL)
 	 * ORDER_TYPE_STOPLOSS_MARKET: Stop Loss Market Order(SL-M)
@@ -55,27 +56,27 @@ public class Examples {
 
 	/* PRODUCT TYPE */
 	/*
-	 * PRODUCT_DELIVERY: Cash & Carry for equity (CNC) 
+	 * PRODUCT_DELIVERY: Cash & Carry for equity (CNC)
 	 * PRODUCT_CARRYFORWARD: Normal
-	 * for futures and options (NRML) 
+	 * for futures and options (NRML)
 	 * PRODUCT_MARGIN: Margin Delivery
-	 * PRODUCT_INTRADAY: Margin Intraday Squareoff (MIS) 
+	 * PRODUCT_INTRADAY: Margin Intraday Squareoff (MIS)
 	 * PRODUCT_BO: Bracket Order
 	 * (Only for ROBO)
 	 */
 
 	/* DURATION */
 	/*
-	 * DURATION_DAY: Valid for a day 
+	 * DURATION_DAY: Valid for a day
 	 * DURATION_IOC: Immediate or Cancel
 	 */
 
 	/* EXCHANGE */
 	/*
-	 * EXCHANGE_BSE: BSE Equity 
-	 * EXCHANGE_NSE: NSE Equity 
-	 * EXCHANGE_NFO: NSE Future and Options 
-	 * EXCHANGE_CDS: NSE Currency 
+	 * EXCHANGE_BSE: BSE Equity
+	 * EXCHANGE_NSE: NSE Equity
+	 * EXCHANGE_NFO: NSE Future and Options
+	 * EXCHANGE_CDS: NSE Currency
 	 * EXCHANGE_NCDEX: NCDEX Commodity
 	 * EXCHANGE_MCX: MCX Commodity
 	 */
@@ -85,7 +86,7 @@ public class Examples {
 
 		OrderParams orderParams = new OrderParams();
 		orderParams.variety = Constants.VARIETY_STOPLOSS;
-		orderParams.quantity = 323;
+		orderParams.quantity = 1;
 		orderParams.symboltoken = "1660";
 		orderParams.exchange = Constants.EXCHANGE_NSE;
 		orderParams.ordertype = Constants.ORDER_TYPE_STOPLOSS_LIMIT;
@@ -97,7 +98,7 @@ public class Examples {
 		orderParams.triggerprice = "209";
 
 		Order order = smartConnect.placeOrder(orderParams, "STOPLOSS");
-		System.out.print(order);
+		log.info("order : {}",order);
 	}
 
 	/** Modify order. */
@@ -129,10 +130,7 @@ public class Examples {
 	/** Get order details */
 	public void getOrder(SmartConnect smartConnect) throws SmartAPIException, IOException {
 		JSONObject orders = smartConnect.getOrderHistory(smartConnect.getUserId());
-		System.out.print(orders);
-//		for (int i = 0; i < orders.size(); i++) {
-//			System.out.println(orders.get(i).orderId + " " + orders.get(i).status);
-//		}
+		log.info("orders {} ",orders);
 	}
 
 	/**
@@ -164,6 +162,13 @@ public class Examples {
 	public void getHolding(SmartConnect smartConnect) throws SmartAPIException, IOException {
 		// Returns Holding.
 		JSONObject response = smartConnect.getHolding();
+	}
+
+	/** Get All Holdings */
+	public void getAllHolding(SmartConnect smartConnect) throws SmartAPIException, IOException {
+		// Returns All Holding.
+		JSONObject response = smartConnect.getAllHolding();
+		log.info("response : " , response);
 	}
 
 	/** Get Position */
@@ -270,8 +275,38 @@ public class Examples {
 		requestObejct.put("fromdate", "2021-03-08 09:00");
 		requestObejct.put("todate", "2021-03-09 09:20");
 
-		String response = smartConnect.candleData(requestObejct);
+		JSONArray response = smartConnect.candleData(requestObejct);
 	}
+
+
+	/** Search Scrip Data */
+	public void getSearchScrip(SmartConnect smartConnect) throws SmartAPIException, IOException {
+		JSONObject payload = new JSONObject();
+		payload.put("exchange", "MCX");
+		payload.put("searchscrip", "Crude");
+		smartConnect.getSearchScrip(payload);
+	}
+
+	/**
+	 * Market Data
+	 * To Retrieve Market Data with different modes use.
+	 *  e.g:
+	 *      payload.put("mode", "FULL");
+	 *      payload.put("mode", "LTP");
+	 *      payload.put("mode", "OHLC");
+	 */
+    public void getMarketData(SmartConnect smartConnect) throws SmartAPIException, IOException {
+        JSONObject payload = new JSONObject();
+        payload.put("mode", "FULL"); // You can change the mode as needed
+        JSONObject exchangeTokens = new JSONObject();
+        JSONArray nseTokens = new JSONArray();
+        nseTokens.put("3045");
+        exchangeTokens.put("NSE", nseTokens);
+        payload.put("exchangeTokens", exchangeTokens);
+        JSONObject response = smartConnect.marketData(payload);
+    }
+
+
 
 	public void tickerUsage(String clientId, String feedToken, String strWatchListScript, String task)
 			throws SmartAPIException {
@@ -281,7 +316,7 @@ public class Examples {
 		tickerProvider.setOnConnectedListener(new OnConnect() {
 			@Override
 			public void onConnected() {
-				System.out.println("subscribe() called!");
+				log.info("subscribe() called!");
 				tickerProvider.subscribe();
 			}
 		});
@@ -289,7 +324,7 @@ public class Examples {
 		tickerProvider.setOnTickerArrivalListener(new OnTicks() {
 			@Override
 			public void onTicks(JSONArray ticks) {
-				System.out.println("ticker data: " + ticks.toString());
+				log.info("ticker data: " + ticks.toString());
 			}
 		});
 
@@ -303,7 +338,7 @@ public class Examples {
 		 * method.
 		 */
 		boolean isConnected = tickerProvider.isConnectionOpen();
-		System.out.println(isConnected);
+		log.info("is connected {} ",isConnected);
 
 		// After using SmartAPI ticker, close websocket connection.
 		// tickerProvider.disconnect();
@@ -327,7 +362,7 @@ public class Examples {
 		smartWebsocket.setOnDisconnectedListener(new SmartWSOnDisconnect() {
 			@Override
 			public void onDisconnected() {
-				System.out.println("onDisconnected");
+				log.info("onDisconnected");
 			}
 		});
 
@@ -335,24 +370,24 @@ public class Examples {
 		smartWebsocket.setOnErrorListener(new SmartWSOnError() {
 			@Override
 			public void onError(Exception exception) {
-				System.out.println("onError: " + exception.getMessage());
+				log.info("onError: " + exception.getMessage());
 			}
 
 			@Override
 			public void onError(SmartAPIException smartAPIException) {
-				System.out.println("onError: " + smartAPIException.getMessage());
+				log.info("onError: " + smartAPIException.getMessage());
 			}
 
 			@Override
 			public void onError(String error) {
-				System.out.println("onError: " + error);
+				log.info("onError: " + error);
 			}
 		});
 
 		smartWebsocket.setOnTickerArrivalListener(new SmartWSOnTicks() {
 			@Override
 			public void onTicks(JSONArray ticks) {
-				System.out.println("ticker data: " + ticks.toString());
+				log.info("ticker data: " + ticks.toString());
 			}
 		});
 
@@ -366,7 +401,7 @@ public class Examples {
 		 * method.
 		 */
 		boolean isConnected = smartWebsocket.isConnectionOpen();
-		System.out.println(isConnected);
+		log.info("is connected {}",isConnected);
 
 		// After using SmartAPI ticker, close websocket connection.
 		// smartWebsocket.disconnect();
@@ -379,4 +414,79 @@ public class Examples {
 		JSONObject jsonObject = smartConnect.logout();
 	}
 
+
+	/** Margin data. */
+	public void getMarginDetails(SmartConnect smartConnect) throws SmartAPIException, IOException {
+		List<MarginParams> marginParamsList = new ArrayList<>();
+		MarginParams marginParams = new MarginParams();
+		marginParams.quantity = 1;
+		marginParams.token = "12740";
+		marginParams.exchange = Constants.EXCHANGE_NSE;
+		marginParams.productType = Constants.PRODUCT_DELIVERY;
+		marginParams.price = 0.0;
+		marginParams.tradeType = Constants.TRADETYPE_BUY;
+
+		marginParamsList.add(marginParams);
+		JSONObject jsonObject = smartConnect.getMarginDetails(marginParamsList);
+		log.info("response {} ", jsonObject);
+
+	}
+
+	/** Get Individual Order */
+	public void getIndividualOrder(SmartConnect smartConnect, String orderId) throws SmartAPIException, IOException {
+		JSONObject jsonObject = smartConnect.getIndividualOrderDetails(orderId);
+		log.info("response {} ", jsonObject);
+	}
+
+	/**
+	 * Order update websocket
+	 *
+	 * To retrieve order update websocket data
+	 * @param accessToken
+	 */
+	public void orderUpdateUsage(String accessToken){
+		OrderUpdateWebsocket orderUpdateWebsocket = new OrderUpdateWebsocket(accessToken, new OrderUpdateListner() {
+			/**
+			 * Check if the websocket is connected or not
+			 */
+			@Override
+			public void onConnected() {
+				log.info("order update websocket connected");
+			}
+
+			/**
+			 * Handle the onDisconnected event
+			 */
+			@Override
+			public void onDisconnected() {
+
+			}
+
+			/**
+			 * Handle the onError event
+			 * @param error
+			 */
+			@Override
+			public void onError(SmartStreamError error) {
+
+			}
+
+			/**
+			 * Handle the onPong event
+			 */
+			@Override
+			public void onPong() {
+
+			}
+
+			/**
+			 * Handle the onOrderUpdate event
+			 * @param data
+			 */
+			@Override
+			public void onOrderUpdate(String data) {
+				log.info("order update data {} ",data);
+			}
+		});
+	}
 }

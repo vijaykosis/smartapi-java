@@ -14,9 +14,11 @@ public class Routes {
 
 	public Map<String, String> routes;
 	private static String _rootUrl = "https://apiconnect.angelbroking.com";
-	private static String _loginUrl = "https://apiconnect.angelbroking.com/rest/auth/angelbroking/user/v1/loginByPassword";
+	private static String _loginUrl = _rootUrl+"/rest/auth/angelbroking/user/v1/loginByPassword";
 	private static String _wsuri = "wss://wsfeeds.angelbroking.com/NestHtml5Mobile/socket/stream";
+	private static String _smartStreamWSURI = "wss://smartapisocket.angelone.in/smart-stream";
 	private static String _swsuri = "wss://smartapisocket.angelbroking.com/websocket";
+	private static String _orderUpdateUri = "wss://tns.angelone.in/smart-order-update";
 
 	// Initialize all routes,
 	@SuppressWarnings("serial")
@@ -33,6 +35,7 @@ public class Routes {
 				put("api.order.book", "/rest/secure/angelbroking/order/v1/getOrderBook");
 				put("api.order.trade.book", "/rest/secure/angelbroking/order/v1/getTradeBook");
 				put("api.order.rms.data", "/rest/secure/angelbroking/user/v1/getRMS");
+				put("api.order.rms.AllHolding", "/rest/secure/angelbroking/portfolio/v1/getAllHolding");
 				put("api.order.rms.holding", "/rest/secure/angelbroking/portfolio/v1/getHolding");
 				put("api.order.rms.position", "/rest/secure/angelbroking/order/v1/getPosition");
 				put("api.order.rms.position.convert", "/rest/secure/angelbroking/order/v1/convertPosition");
@@ -43,7 +46,10 @@ public class Routes {
 				put("api.gtt.details", "/rest/secure/angelbroking/gtt/v1/ruleDetails");
 				put("api.gtt.list", "/rest/secure/angelbroking/gtt/v1/ruleList");
 				put("api.candle.data", "/rest/secure/angelbroking/historical/v1/getCandleData");
-
+				put("api.search.script.data", "/rest/secure/angelbroking/order/v1/searchScrip");
+				put("api.market.data", "/rest/secure/angelbroking/market/v1/quote");
+				put("api.margin.batch", "/rest/secure/angelbroking/margin/v1/batch");
+				put("api.individual.order", "/rest/secure/angelbroking/order/v1/details/");
 			}
 		};
 	}
@@ -62,5 +68,13 @@ public class Routes {
 
 	public String getSWsuri() {
 		return _swsuri;
+	}
+	
+	public String getSmartStreamWSURI() {
+		return _smartStreamWSURI;
+	}
+
+	public String getOrderUpdateUri() {
+		return _orderUpdateUri;
 	}
 }
