@@ -110,6 +110,22 @@ public class APITest {
 			/* log.info("Individual Order"); */
 			examples.getIndividualOrder(smartConnect, "1000051");
 
+			examples.estimateCharges(smartConnect);
+
+			examples.verifyDis(smartConnect);
+
+			examples.generateTPIN(smartConnect);
+
+			examples.getTranStatus(smartConnect);
+
+			examples.optionGreek(smartConnect);
+
+			examples.gainersLosers(smartConnect);
+
+			examples.putCallRatio(smartConnect);
+
+			examples.oIBuildup(smartConnect);
+
 
 			/* SmartAPITicker */
 			String clientId = "<clientId>";

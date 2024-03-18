@@ -489,4 +489,87 @@ public class Examples {
 			}
 		});
 	}
+
+	public void estimateCharges(SmartConnect smartConnect) throws SmartAPIException, IOException {
+		List<EstimateChargesParams> estimateChargesParamsList = new ArrayList<>();
+		EstimateChargesParams estimate_Charges_Params = new EstimateChargesParams();
+		estimate_Charges_Params.product_type = Constants.PRODUCT_DELIVERY;
+		estimate_Charges_Params.transaction_type = Constants.TRANSACTION_TYPE_BUY;
+		estimate_Charges_Params.quantity = "10";
+		estimate_Charges_Params.price = "800";
+		estimate_Charges_Params.exchange = Constants.EXCHANGE_NSE;
+		estimate_Charges_Params.symbol_name = "745AS33";
+		estimate_Charges_Params.token = "17117";
+
+		estimateChargesParamsList.add(estimate_Charges_Params);
+
+		JSONObject jsonObject = smartConnect.estimateCharges(estimateChargesParamsList);
+		log.info("response {} ", jsonObject);
+	}
+
+	public void verifyDis(SmartConnect smartConnect) throws SmartAPIException, IOException {
+
+		JSONObject payload = new JSONObject();
+		payload.put("isin", "INE242A01010");
+		payload.put("quantity", "1");
+
+		JSONObject jsonObject = smartConnect.verifyDis(payload);
+		log.info("response {} ", jsonObject);
+	}
+
+	public void generateTPIN(SmartConnect smartConnect) throws SmartAPIException, IOException {
+
+		JSONObject payload = new JSONObject();
+		payload.put("dpId", "33200");
+		payload.put("ReqId", "1431307824801952");
+		payload.put("boid", "1203320018563571");
+		payload.put("pan", "JZTPS2255C");
+
+		JSONObject jsonObject = smartConnect.generateTPIN(payload);
+		log.info("response {} ", jsonObject);
+	}
+
+	public void getTranStatus(SmartConnect smartConnect) throws SmartAPIException, IOException {
+
+		JSONObject payload = new JSONObject();
+		payload.put("ReqId", "1431307824801952");
+
+		JSONObject jsonObject = smartConnect.getTranStatus(payload);
+		log.info("response {} ", jsonObject);
+	}
+
+	public void optionGreek(SmartConnect smartConnect) throws SmartAPIException, IOException {
+
+		JSONObject payload = new JSONObject();
+		payload.put("name", "TCS");
+		payload.put("expirydate", "25MAR2024");
+
+		JSONObject jsonObject = smartConnect.optionGreek(payload);
+		log.info("response {} ", jsonObject);
+	}
+
+	public void gainersLosers(SmartConnect smartConnect) throws SmartAPIException, IOException {
+
+		JSONObject payload = new JSONObject();
+		payload.put("datatype", "PercOIGainers");
+		payload.put("expirytype", "NEAR");
+
+		JSONObject jsonObject = smartConnect.gainersLosers(payload);
+		log.info("response {} ", jsonObject);
+	}
+
+	public void putCallRatio(SmartConnect smartConnect) throws SmartAPIException, IOException {
+		JSONObject response = smartConnect.putCallRatio();
+		log.info("response {} ", response);
+	}
+
+	public void oIBuildup(SmartConnect smartConnect) throws SmartAPIException, IOException {
+
+		JSONObject payload = new JSONObject();
+		payload.put("expirytype", "NEAR");
+		payload.put("datatype", "Long Built Up");
+
+		JSONObject jsonObject = smartConnect.oIBuildup(payload);
+		log.info("response {} ", jsonObject);
+	}
 }
