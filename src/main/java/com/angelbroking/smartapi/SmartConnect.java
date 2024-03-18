@@ -862,5 +862,168 @@ public class SmartConnect {
 		   throw new JSONException(String.format("%s  while fetching margin data %s", JSON_EXCEPTION_ERROR_MSG, ex.getMessage()));
 	   }
 	}
+
+
+	public JSONObject estimateCharges(List<EstimateChargesParams> estimateChargesParams) throws IOException, SmartAPIException {
+		try {
+			JSONArray ordersArray = new JSONArray();
+
+			for (EstimateChargesParams params : estimateChargesParams) {
+				JSONObject order = new JSONObject();
+				order.put("product_type", params.product_type);
+				order.put("transaction_type", params.transaction_type);
+				order.put("quantity", params.quantity);
+				order.put("price", params.price);
+				order.put("exchange", params.exchange);
+				order.put("symbol_name", params.symbol_name);
+				order.put("token", params.token);
+				ordersArray.put(order);
+			}
+
+			JSONObject requestBody = new JSONObject();
+			requestBody.put("orders", ordersArray);
+
+			String url = routes.get("api.estimateCharges");
+			JSONObject response = smartAPIRequestHandler.postRequest(this.apiKey, url, requestBody, accessToken);
+			return response;
+		} catch (SmartAPIException ex) {
+			log.error("{} while fetching estimateCharges data {}", SMART_API_EXCEPTION_OCCURRED, ex.toString());
+			throw new SmartAPIException(String.format("%s  while fetching estimateCharges data %s", SMART_API_EXCEPTION_ERROR_MSG, ex));
+		} catch (IOException ex) {
+			log.error("{}  while fetching estimateCharges data {}", IO_EXCEPTION_OCCURRED, ex.getMessage());
+			throw new IOException(String.format("%s  while fetching estimateCharges data %s", IO_EXCEPTION_ERROR_MSG, ex.getMessage()));
+		} catch (JSONException ex) {
+			log.error("{}  while fetching estimateCharges data {}", JSON_EXCEPTION_OCCURRED, ex.getMessage());
+			throw new JSONException(String.format("%s  while fetching estimateCharges data %s", JSON_EXCEPTION_ERROR_MSG, ex.getMessage()));
+
+		}
+	}
+
+	public JSONObject verifyDis(JSONObject params) throws SmartAPIException, IOException {
+		try{
+			String url = routes.get("api.verifyDis");
+			JSONObject response = smartAPIRequestHandler.postRequest(this.apiKey, url, params, accessToken);
+			return response;
+		}catch (SmartAPIException ex) {
+			log.error("{} while verifyDis {}", SMART_API_EXCEPTION_OCCURRED, ex.toString());
+			throw new SmartAPIException(String.format("%s in verifyDis %s", SMART_API_EXCEPTION_ERROR_MSG, ex));
+		} catch (IOException ex) {
+			log.error("{} while verifyDis {}", IO_EXCEPTION_OCCURRED, ex.getMessage());
+			throw new IOException(String.format("%s in verifyDis %s", IO_EXCEPTION_ERROR_MSG, ex.getMessage()));
+		} catch (JSONException ex) {
+			log.error("{} while verifyDis {}", JSON_EXCEPTION_OCCURRED, ex.getMessage());
+			throw new JSONException(String.format("%s in verifyDis %s", JSON_EXCEPTION_ERROR_MSG, ex.getMessage()));
+
+		}
+	}
+
+	public JSONObject generateTPIN(JSONObject params) throws SmartAPIException, IOException {
+		try{
+			String url = routes.get("api.generateTPIN");
+			JSONObject response = smartAPIRequestHandler.postRequest(this.apiKey, url, params, accessToken);
+			return response;
+		}catch (SmartAPIException ex) {
+			log.error("{} while generateTPIN {}", SMART_API_EXCEPTION_OCCURRED, ex.toString());
+			throw new SmartAPIException(String.format("%s in generateTPIN %s", SMART_API_EXCEPTION_ERROR_MSG, ex));
+		} catch (IOException ex) {
+			log.error("{} while generateTPIN {}", IO_EXCEPTION_OCCURRED, ex.getMessage());
+			throw new IOException(String.format("%s in generateTPIN %s", IO_EXCEPTION_ERROR_MSG, ex.getMessage()));
+		} catch (JSONException ex) {
+			log.error("{} while generateTPIN {}", JSON_EXCEPTION_OCCURRED, ex.getMessage());
+			throw new JSONException(String.format("%s in generateTPIN %s", JSON_EXCEPTION_ERROR_MSG, ex.getMessage()));
+
+		}
+	}
+
+	public JSONObject getTranStatus(JSONObject params) throws SmartAPIException, IOException {
+		try{
+			String url = routes.get("api.getTranStatus");
+			JSONObject response = smartAPIRequestHandler.postRequest(this.apiKey, url, params, accessToken);
+			return response;
+		}catch (SmartAPIException ex) {
+			log.error("{} while getTranStatus {}", SMART_API_EXCEPTION_OCCURRED, ex.toString());
+			throw new SmartAPIException(String.format("%s in getTranStatus %s", SMART_API_EXCEPTION_ERROR_MSG, ex));
+		} catch (IOException ex) {
+			log.error("{} while getTranStatus {}", IO_EXCEPTION_OCCURRED, ex.getMessage());
+			throw new IOException(String.format("%s in getTranStatus %s", IO_EXCEPTION_ERROR_MSG, ex.getMessage()));
+		} catch (JSONException ex) {
+			log.error("{} while getTranStatus {}", JSON_EXCEPTION_OCCURRED, ex.getMessage());
+			throw new JSONException(String.format("%s in getTranStatus %s", JSON_EXCEPTION_ERROR_MSG, ex.getMessage()));
+
+		}
+	}
+
+	public JSONObject optionGreek(JSONObject params) throws SmartAPIException, IOException {
+		try{
+			String url = routes.get("api.optionGreek");
+			JSONObject response = smartAPIRequestHandler.postRequest(this.apiKey, url, params, accessToken);
+			return response;
+		}catch (SmartAPIException ex) {
+			log.error("{} while optionGreek {}", SMART_API_EXCEPTION_OCCURRED, ex.toString());
+			throw new SmartAPIException(String.format("%s in optionGreek %s", SMART_API_EXCEPTION_ERROR_MSG, ex));
+		} catch (IOException ex) {
+			log.error("{} while optionGreek {}", IO_EXCEPTION_OCCURRED, ex.getMessage());
+			throw new IOException(String.format("%s in optionGreek %s", IO_EXCEPTION_ERROR_MSG, ex.getMessage()));
+		} catch (JSONException ex) {
+			log.error("{} while optionGreek {}", JSON_EXCEPTION_OCCURRED, ex.getMessage());
+			throw new JSONException(String.format("%s in optionGreek %s", JSON_EXCEPTION_ERROR_MSG, ex.getMessage()));
+
+		}
+	}
+
+	public JSONObject gainersLosers(JSONObject params) throws SmartAPIException, IOException {
+		try{
+			String url = routes.get("api.gainersLosers");
+			JSONObject response = smartAPIRequestHandler.postRequest(this.apiKey, url, params, accessToken);
+			return response;
+		}catch (SmartAPIException ex) {
+			log.error("{} while gainersLosers {}", SMART_API_EXCEPTION_OCCURRED, ex.toString());
+			throw new SmartAPIException(String.format("%s in gainersLosers %s", SMART_API_EXCEPTION_ERROR_MSG, ex));
+		} catch (IOException ex) {
+			log.error("{} while gainersLosers {}", IO_EXCEPTION_OCCURRED, ex.getMessage());
+			throw new IOException(String.format("%s in gainersLosers %s", IO_EXCEPTION_ERROR_MSG, ex.getMessage()));
+		} catch (JSONException ex) {
+			log.error("{} while gainersLosers {}", JSON_EXCEPTION_OCCURRED, ex.getMessage());
+			throw new JSONException(String.format("%s in gainersLosers %s", JSON_EXCEPTION_ERROR_MSG, ex.getMessage()));
+
+		}
+	}
+
+	public JSONObject putCallRatio() throws IOException, SmartAPIException {
+		try {
+			String url = routes.get("api.putCallRatio");
+			JSONObject response = smartAPIRequestHandler.getRequest(this.apiKey, url, accessToken);
+			return response;
+		} catch (SmartAPIException ex) {
+			log.error("{} while getting putCallRatio {}", SMART_API_EXCEPTION_OCCURRED, ex.toString());
+			throw new SmartAPIException(String.format("%s in getting putCallRatio %s", SMART_API_EXCEPTION_ERROR_MSG, ex));
+		} catch (IOException ex) {
+			log.error("{} while getting putCallRatio {}", IO_EXCEPTION_OCCURRED, ex.getMessage());
+			throw new IOException(String.format("%s  while fetching putCallRatio data %s", IO_EXCEPTION_ERROR_MSG, ex.getMessage()));
+		} catch (JSONException ex) {
+			log.error("{}  while getting putCallRatio {}", JSON_EXCEPTION_OCCURRED, ex.getMessage());
+			throw new JSONException(String.format("%s  while fetching putCallRatio data %s", JSON_EXCEPTION_ERROR_MSG, ex.getMessage()));
+		}
+	}
+
+	public JSONObject oIBuildup(JSONObject params) throws SmartAPIException, IOException {
+		try{
+			String url = routes.get("api.oIBuildup");
+			JSONObject response = smartAPIRequestHandler.postRequest(this.apiKey, url, params, accessToken);
+			return response;
+		}catch (SmartAPIException ex) {
+			log.error("{} while oIBuildup {}", SMART_API_EXCEPTION_OCCURRED, ex.toString());
+			throw new SmartAPIException(String.format("%s in oIBuildup %s", SMART_API_EXCEPTION_ERROR_MSG, ex));
+		} catch (IOException ex) {
+			log.error("{} while oIBuildup {}", IO_EXCEPTION_OCCURRED, ex.getMessage());
+			throw new IOException(String.format("%s in oIBuildup %s", IO_EXCEPTION_ERROR_MSG, ex.getMessage()));
+		} catch (JSONException ex) {
+			log.error("{} while oIBuildup {}", JSON_EXCEPTION_OCCURRED, ex.getMessage());
+			throw new JSONException(String.format("%s in oIBuildup %s", JSON_EXCEPTION_ERROR_MSG, ex.getMessage()));
+
+		}
+	}
+
+
 }
 
